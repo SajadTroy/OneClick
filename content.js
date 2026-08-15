@@ -4,31 +4,64 @@
 
   const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-  const showFlash = () => {
-    const flash = document.createElement('div');
-    flash.style.position = 'fixed';
-    flash.style.top = '0';
-    flash.style.left = '0';
-    flash.style.width = '100vw';
-    flash.style.height = '100vh';
-    flash.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-    flash.style.zIndex = '2147483647';
-    flash.style.pointerEvents = 'none';
-    flash.style.transition = 'opacity 0.2s ease-out';
-    document.documentElement.appendChild(flash);
-    
-    requestAnimationFrame(() => {
-        flash.style.opacity = '0';
-        setTimeout(() => flash.remove(), 200);
-    });
-  };
+  // Inject keyframes for popup spinner
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes oneclick-spin {
+      to { transform: rotate(360deg); }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Create floating popup
+  const popup = document.createElement('div');
+  popup.style.cssText = `
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    z-index: 2147483647;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  `;
+  
+  const spinner = document.createElement('div');
+  spinner.style.cssText = `
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.2);
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: oneclick-spin 1s linear infinite;
+  `;
+  
+  const textLabel = document.createElement('span');
+  textLabel.innerText = 'Preparing capture...';
+  
+  popup.appendChild(spinner);
+  popup.appendChild(textLabel);
+  document.documentElement.appendChild(popup);
 
   const hiddenElements = [];
   const hideFixedElements = () => {
     const elements = document.querySelectorAll('*');
     for (const el of elements) {
-      const style = window.getComputedStyle(el);
-      if ((style.position === 'fixed' || style.position === 'sticky') && style.opacity !== '0') {
+      const computedStyle = window.getComputedStyle(el);
+      // Exclude our own popup from being hidden permanently
+      if (el === popup || popup.contains(el)) continue;
+      
+      if ((computedStyle.position === 'fixed' || computedStyle.position === 'sticky') && computedStyle.opacity !== '0') {
         hiddenElements.push({ el, opacity: el.style.opacity });
         el.style.opacity = '0';
       }
@@ -65,13 +98,25 @@
   while (true) {
     const currentScrollY = window.scrollY;
     
+    // Calculate and update progress
+    let maxScroll = initialTotalHeight - viewportHeight;
+    if (maxScroll <= 0) maxScroll = 1; // prevent division by zero
+    let progress = Math.min(100, Math.round((currentScrollY / maxScroll) * 100));
+    textLabel.innerText = `Capturing... ${progress}%`;
+
+    // Hide popup exactly before capturing to prevent it from being in the screenshot
+    popup.style.visibility = 'hidden';
+    
     const response = await chrome.runtime.sendMessage({ action: 'capture_visible_tab' });
+    
+    // Show popup immediately after
+    popup.style.visibility = 'visible';
+
     if (response && response.dataUrl) {
       frames.push({
         yPos: currentScrollY, 
         dataUrl: response.dataUrl
       });
-      showFlash(); 
     } else if (response && response.error) {
       break;
     }
@@ -95,10 +140,16 @@
     }
   }
 
+  textLabel.innerText = 'Processing...';
+
   restoreFixedElements();
   window.scrollTo(originalScrollX, originalScrollY);
   document.documentElement.style.scrollBehavior = originalScrollBehavior;
   document.documentElement.style.overflow = originalOverflow;
+  
+  // Cleanup
+  popup.remove();
+  style.remove();
   window.isCapturingScreenshot = false;
 
   await chrome.storage.local.set({ 
