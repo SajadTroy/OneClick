@@ -28,9 +28,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         canvas.width = firstImg.width;
         canvas.height = captureDimensions.height * scale;
 
-        for (const frame of capturedFrames) {
+        for (let i = 0; i < capturedFrames.length; i++) {
+            const frame = capturedFrames[i];
             const img = await loadImage(frame.dataUrl);
-            ctx.drawImage(img, 0, frame.yPos * scale);
+            
+            // Snap to physical pixels to prevent anti-aliasing gaps
+            let yOffset = Math.floor(frame.yPos * scale);
+            // Overlap by 1 pixel to hide any sub-pixel rendering lines
+            if (i > 0) {
+                yOffset -= 1;
+            }
+            ctx.drawImage(img, 0, yOffset);
         }
 
         loading.style.display = 'none';
