@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+    <!-- Base background -->
+    <rect width="128" height="128" rx="28" fill="#3b82f6" />
+    
+    <!-- Web browser window -->
+    <rect x="18" y="24" width="92" height="80" rx="8" fill="#ffffff" />
+    <path d="M18 48 L110 48" stroke="#e2e8f0" stroke-width="4" />
+    
+    <!-- Window action buttons -->
+    <circle cx="32" cy="36" r="4" fill="#ef4444" />
+    <circle cx="46" cy="36" r="4" fill="#eab308" />
+    <circle cx="60" cy="36" r="4" fill="#22c55e" />
+    
+    <!-- Camera/Screenshot icon inside the window -->
+    <rect x="36" y="60" width="56" height="32" rx="4" fill="none" stroke="#3b82f6" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M52 60 L56 52 L72 52 L76 60" fill="none" stroke="#3b82f6" stroke-width="6" stroke-linejoin="round"/>
+    <circle cx="64" cy="76" r="8" fill="none" stroke="#3b82f6" stroke-width="6" />
+</svg>
