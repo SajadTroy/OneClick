@@ -54,8 +54,8 @@
     document.body.clientHeight, document.documentElement.clientHeight
   );
   
-  const viewportHeight = window.innerHeight;
-  const viewportWidth = window.innerWidth;
+  const viewportHeight = document.documentElement.clientHeight;
+  const viewportWidth = document.documentElement.clientWidth;
 
   const frames = [];
 

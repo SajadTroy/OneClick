@@ -28,6 +28,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         canvas.width = firstImg.width;
         canvas.height = captureDimensions.height * scale;
 
+        // Fill background with white to prevent any transparent lines
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
         for (let i = 0; i < capturedFrames.length; i++) {
             const frame = capturedFrames[i];
             const img = await loadImage(frame.dataUrl);
