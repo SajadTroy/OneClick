@@ -59,19 +59,38 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         btnPdf.addEventListener('click', () => {
             const { jsPDF } = window.jspdf;
-            const imgData = canvas.toDataURL('image/jpeg', 1.0);
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
             
             const pxToPt = 0.75;
             const pdfWidth = canvas.width * pxToPt;
-            const pdfHeight = canvas.height * pxToPt;
+            const totalPdfHeight = canvas.height * pxToPt;
+            const MAX_PAGE_HEIGHT = 14400; // jsPDF physical limit per page
+
+            const firstPageHeight = Math.min(totalPdfHeight, MAX_PAGE_HEIGHT);
 
             const doc = new jsPDF({
-                orientation: pdfWidth > pdfHeight ? 'l' : 'p',
+                orientation: pdfWidth > firstPageHeight ? 'l' : 'p',
                 unit: 'pt',
-                format: [pdfWidth, pdfHeight]
+                format: [pdfWidth, firstPageHeight]
             });
 
-            doc.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            let remainingHeight = totalPdfHeight;
+            let position = 0;
+            let isFirstPage = true;
+
+            while (remainingHeight > 0) {
+                const currentPageHeight = Math.min(MAX_PAGE_HEIGHT, remainingHeight);
+                
+                if (!isFirstPage) {
+                    doc.addPage([pdfWidth, currentPageHeight], pdfWidth > currentPageHeight ? 'l' : 'p');
+                }
+                
+                doc.addImage(imgData, 'JPEG', 0, position, pdfWidth, totalPdfHeight);
+                
+                remainingHeight -= MAX_PAGE_HEIGHT;
+                position -= MAX_PAGE_HEIGHT;
+                isFirstPage = false;
+            }
             
             const pdfBlob = doc.output('blob');
             const url = URL.createObjectURL(pdfBlob);
