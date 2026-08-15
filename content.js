@@ -23,6 +23,24 @@
     });
   };
 
+  const hiddenElements = [];
+  const hideFixedElements = () => {
+    const elements = document.querySelectorAll('*');
+    for (const el of elements) {
+      const style = window.getComputedStyle(el);
+      if ((style.position === 'fixed' || style.position === 'sticky') && style.opacity !== '0') {
+        hiddenElements.push({ el, opacity: el.style.opacity });
+        el.style.opacity = '0';
+      }
+    }
+  };
+
+  const restoreFixedElements = () => {
+    for (const item of hiddenElements) {
+      item.el.style.opacity = item.opacity;
+    }
+  };
+
   const originalScrollX = window.scrollX;
   const originalScrollY = window.scrollY;
   const originalOverflow = document.documentElement.style.overflow;
@@ -30,7 +48,7 @@
   
   document.documentElement.style.scrollBehavior = 'auto';
 
-  const totalHeight = Math.max(
+  const initialTotalHeight = Math.max(
     document.body.scrollHeight, document.documentElement.scrollHeight,
     document.body.offsetHeight, document.documentElement.offsetHeight,
     document.body.clientHeight, document.documentElement.clientHeight
@@ -39,47 +57,45 @@
   const viewportHeight = window.innerHeight;
   const viewportWidth = window.innerWidth;
 
-  let yPos = 0;
   const frames = [];
 
   window.scrollTo(0, 0);
   await wait(600); 
 
-  while (yPos < totalHeight) {
+  while (true) {
+    const currentScrollY = window.scrollY;
+    
     const response = await chrome.runtime.sendMessage({ action: 'capture_visible_tab' });
     if (response && response.dataUrl) {
       frames.push({
-        yPos: Math.min(yPos, totalHeight - viewportHeight), 
+        yPos: currentScrollY, 
         dataUrl: response.dataUrl
       });
       showFlash(); 
     } else if (response && response.error) {
       break;
     }
+    
+    if (currentScrollY === 0) {
+        hideFixedElements();
+    }
 
-    let nextYPos = yPos + viewportHeight;
-    if (yPos + viewportHeight >= totalHeight) break;
-    
-    yPos = nextYPos;
-    window.scrollTo(0, yPos);
-    
+    if (currentScrollY + viewportHeight >= initialTotalHeight) {
+        break; 
+    }
+
+    let nextYPos = currentScrollY + viewportHeight;
+    window.scrollTo(0, nextYPos);
     await wait(600); 
-    const actualScrollY = window.scrollY;
     
-    if (actualScrollY + viewportHeight >= totalHeight) {
-        const finalResponse = await chrome.runtime.sendMessage({ action: 'capture_visible_tab' });
-        if (finalResponse && finalResponse.dataUrl) {
-            frames.push({
-                yPos: totalHeight - viewportHeight, 
-                dataUrl: finalResponse.dataUrl
-            });
-            showFlash();
-        }
+    const newScrollY = window.scrollY;
+    
+    if (newScrollY <= currentScrollY) {
         break;
     }
-    yPos = actualScrollY;
   }
 
+  restoreFixedElements();
   window.scrollTo(originalScrollX, originalScrollY);
   document.documentElement.style.scrollBehavior = originalScrollBehavior;
   document.documentElement.style.overflow = originalOverflow;
@@ -89,7 +105,7 @@
     capturedFrames: frames,
     captureDimensions: {
         width: viewportWidth,
-        height: totalHeight,
+        height: initialTotalHeight,
         viewportHeight: viewportHeight
     }
   });
