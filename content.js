@@ -3,6 +3,7 @@
   window.isCapturingScreenshot = true;
 
   const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+  const waitForPaint = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
   // Inject keyframes for popup spinner
   const style = document.createElement('style');
@@ -104,12 +105,11 @@
     let progress = Math.min(100, Math.round((currentScrollY / maxScroll) * 100));
     textLabel.innerText = `Capturing... ${progress}%`;
 
-    // Hide popup exactly before capturing to prevent it from being in the screenshot
     popup.style.visibility = 'hidden';
+    await waitForPaint();
     
     const response = await chrome.runtime.sendMessage({ action: 'capture_visible_tab' });
     
-    // Show popup immediately after
     popup.style.visibility = 'visible';
 
     if (response && response.dataUrl) {
@@ -131,7 +131,8 @@
 
     let nextYPos = currentScrollY + viewportHeight;
     window.scrollTo(0, nextYPos);
-    await wait(600); 
+    await wait(400);
+    await waitForPaint();
     
     const newScrollY = window.scrollY;
     

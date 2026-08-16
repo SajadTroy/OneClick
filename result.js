@@ -59,12 +59,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         btnPdf.addEventListener('click', () => {
             const { jsPDF } = window.jspdf;
-            const imgData = canvas.toDataURL('image/jpeg', 0.95);
-            
+
+            const MAX_PDF_WIDTH = 1240;
+            const pdfScale = Math.min(1, MAX_PDF_WIDTH / canvas.width);
+            const scaledW = Math.floor(canvas.width * pdfScale);
+            const scaledH = Math.floor(canvas.height * pdfScale);
+
+            const offscreen = document.createElement('canvas');
+            offscreen.width = scaledW;
+            offscreen.height = scaledH;
+            const offCtx = offscreen.getContext('2d');
+            offCtx.drawImage(canvas, 0, 0, scaledW, scaledH);
+            const imgData = offscreen.toDataURL('image/jpeg', 0.85);
+
             const pxToPt = 0.75;
-            const pdfWidth = canvas.width * pxToPt;
-            const totalPdfHeight = canvas.height * pxToPt;
-            const MAX_PAGE_HEIGHT = 14400; // jsPDF physical limit per page
+            const pdfWidth = scaledW * pxToPt;
+            const totalPdfHeight = scaledH * pxToPt;
+            const MAX_PAGE_HEIGHT = 14400;
 
             const firstPageHeight = Math.min(totalPdfHeight, MAX_PAGE_HEIGHT);
 
@@ -80,18 +91,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             while (remainingHeight > 0) {
                 const currentPageHeight = Math.min(MAX_PAGE_HEIGHT, remainingHeight);
-                
                 if (!isFirstPage) {
                     doc.addPage([pdfWidth, currentPageHeight], pdfWidth > currentPageHeight ? 'l' : 'p');
                 }
-                
                 doc.addImage(imgData, 'JPEG', 0, position, pdfWidth, totalPdfHeight);
-                
                 remainingHeight -= MAX_PAGE_HEIGHT;
                 position -= MAX_PAGE_HEIGHT;
                 isFirstPage = false;
             }
-            
+
             const pdfBlob = doc.output('blob');
             const url = URL.createObjectURL(pdfBlob);
             chrome.downloads.download({
