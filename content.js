@@ -189,9 +189,11 @@
   window.isCapturingScreenshot = false;
 
   const rect = isMainScroll ? null : scrollNode.getBoundingClientRect();
+  const pageTitle = document.title || 'Screenshot';
 
   await chrome.storage.local.set({
     [sessionKey]: {
+      title: pageTitle,
       frames,
       dimensions: {
         windowWidth: viewportWidth,

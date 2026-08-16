@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  const { frames: capturedFrames, dimensions: captureDimensions } = sessionData;
+  const { title, frames: capturedFrames, dimensions: captureDimensions } = sessionData;
+  const safeTitle = (title || 'Screenshot').replace(/[<>:"\/\\|?*\x00-\x1F]/g, '-').trim() || 'Screenshot';
 
   const loadImage = (src) => new Promise((resolve, reject) => {
     const img = new Image();
@@ -92,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const dataUrl = canvas.toDataURL('image/png');
       chrome.downloads.download({
         url: dataUrl,
-        filename: 'screenshot.png',
+        filename: `${safeTitle}.png`,
         saveAs: true
       });
     });
@@ -137,7 +138,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       chrome.downloads.download({
         url: url,
-        filename: 'screenshot.pdf',
+        filename: `${safeTitle}.pdf`,
         saveAs: true
       }, () => {
         URL.revokeObjectURL(url);
