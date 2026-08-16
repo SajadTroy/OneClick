@@ -2,6 +2,9 @@
   if (window.isCapturingScreenshot) return;
   window.isCapturingScreenshot = true;
 
+  const { activeSessionId } = await chrome.storage.local.get('activeSessionId');
+  const sessionKey = `capturedFrames_${activeSessionId}`;
+
   const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   const waitForPaint = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -154,11 +157,13 @@
   window.isCapturingScreenshot = false;
 
   await chrome.storage.local.set({
-    capturedFrames: frames,
-    captureDimensions: {
-      width: viewportWidth,
-      height: initialTotalHeight,
-      viewportHeight: viewportHeight
+    [sessionKey]: {
+      frames,
+      dimensions: {
+        width: viewportWidth,
+        height: initialTotalHeight,
+        viewportHeight: viewportHeight
+      }
     }
   });
 

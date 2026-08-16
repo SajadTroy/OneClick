@@ -8,7 +8,9 @@ chrome.action.onClicked.addListener(async (tab) => {
   }
 
   try {
-    await chrome.storage.local.set({ capturedFrames: [] });
+    const sessionId = Date.now().toString();
+
+    await chrome.storage.local.set({ activeSessionId: sessionId });
 
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
@@ -32,6 +34,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.action === 'capture_complete') {
-    chrome.tabs.create({ url: chrome.runtime.getURL('result.html') });
+    chrome.storage.local.get('activeSessionId', ({ activeSessionId }) => {
+      chrome.tabs.create({ url: chrome.runtime.getURL(`result.html?session=${activeSessionId}`) });
+    });
   }
 });

@@ -5,14 +5,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnPng = document.getElementById('download-png');
   const btnPdf = document.getElementById('download-pdf');
 
-  const { capturedFrames, captureDimensions } = await chrome.storage.local.get(['capturedFrames', 'captureDimensions']);
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session');
+  const sessionKey = `capturedFrames_${sessionId}`;
 
-  if (!capturedFrames || capturedFrames.length === 0) {
+  const stored = await chrome.storage.local.get(sessionKey);
+  const sessionData = stored[sessionKey];
+
+  if (!sessionData || !sessionData.frames || sessionData.frames.length === 0) {
     loading.textContent = 'Error: No screenshot data found.';
     loading.style.color = 'red';
     loading.classList.remove('loading');
     return;
   }
+
+  const { frames: capturedFrames, dimensions: captureDimensions } = sessionData;
 
   const loadImage = (src) => new Promise((resolve, reject) => {
     const img = new Image();
