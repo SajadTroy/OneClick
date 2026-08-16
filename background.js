@@ -1,13 +1,5 @@
 function updateActionState(tabId, url) {
   if (!url) return;
-  const isRestricted = url.startsWith('chrome://') ||
-    url.startsWith('https://chrome.google.com/webstore') ||
-    url.startsWith('https://chromewebstore.google.com/');
-
-  chrome.action.setPopup({
-    tabId: tabId,
-    popup: isRestricted ? 'error.html' : ''
-  });
 }
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -25,6 +17,29 @@ chrome.tabs.onActivated.addListener(({ tabId }) => {
 });
 
 chrome.action.onClicked.addListener(async (tab) => {
+  const isRestricted = tab.url.startsWith('chrome://') || 
+                       tab.url.startsWith('https://chrome.google.com/webstore') || 
+                       tab.url.startsWith('https://chromewebstore.google.com/');
+
+  if (isRestricted) {
+    chrome.windows.getCurrent((currentWindow) => {
+      const width = 340;
+      const height = 240;
+      const left = Math.round(currentWindow.left + currentWindow.width - width - 30);
+      const top = Math.round(currentWindow.top + currentWindow.height - height - 30);
+      
+      chrome.windows.create({
+        url: chrome.runtime.getURL('error.html'),
+        type: 'popup',
+        width: width,
+        height: height,
+        left: left,
+        top: top
+      });
+    });
+    return;
+  }
+
   try {
     const sessionId = Date.now().toString();
 
@@ -35,9 +50,20 @@ chrome.action.onClicked.addListener(async (tab) => {
       files: ['content.js']
     });
   } catch (err) {
-    chrome.action.setPopup({
-      tabId: tab.id,
-      popup: 'error.html'
+    chrome.windows.getCurrent((currentWindow) => {
+      const width = 340;
+      const height = 240;
+      const left = Math.round(currentWindow.left + currentWindow.width - width - 30);
+      const top = Math.round(currentWindow.top + currentWindow.height - height - 30);
+      
+      chrome.windows.create({
+        url: chrome.runtime.getURL('error.html'),
+        type: 'popup',
+        width: width,
+        height: height,
+        left: left,
+        top: top
+      });
     });
   }
 });
