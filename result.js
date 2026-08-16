@@ -100,23 +100,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnPdf.addEventListener('click', () => {
       const { jsPDF } = window.jspdf;
 
-      const MAX_PDF_WIDTH = 1240;
-      const pdfScale = Math.min(1, MAX_PDF_WIDTH / canvas.width);
-      const scaledW = Math.floor(canvas.width * pdfScale);
-      const scaledH = Math.floor(canvas.height * pdfScale);
-
-      const offscreen = document.createElement('canvas');
-      offscreen.width = scaledW;
-      offscreen.height = scaledH;
-
-      const offCtx = offscreen.getContext('2d');
-      offCtx.drawImage(canvas, 0, 0, scaledW, scaledH);
-
-      const imgData = offscreen.toDataURL('image/jpeg', 0.85);
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
 
       const pxToPt = 0.75;
-      const pdfWidth = scaledW * pxToPt;
-      const totalPdfHeight = scaledH * pxToPt;
+      const pdfWidth = canvas.width * pxToPt;
+      const totalPdfHeight = canvas.height * pxToPt;
       const MAX_PAGE_HEIGHT = 14400;
       const firstPageHeight = Math.min(totalPdfHeight, MAX_PAGE_HEIGHT);
 
