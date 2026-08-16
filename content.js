@@ -79,29 +79,54 @@
     }
   };
 
-  const originalScrollX = window.scrollX;
-  const originalScrollY = window.scrollY;
+  const getScrollingElement = () => {
+    const main = document.scrollingElement || document.documentElement;
+    if (main.scrollHeight > window.innerHeight) return main;
+
+    let largest = main;
+    let maxArea = 0;
+    for (const el of document.querySelectorAll('*')) {
+      if (el.scrollHeight > el.clientHeight) {
+        const style = window.getComputedStyle(el);
+        if (style.overflowY === 'auto' || style.overflowY === 'scroll' || style.overflowY === 'overlay') {
+          const area = el.clientWidth * el.clientHeight;
+          if (area > maxArea) {
+            maxArea = area;
+            largest = el;
+          }
+        }
+      }
+    }
+    return largest;
+  };
+
+  const scrollNode = getScrollingElement();
+  const isMainScroll = scrollNode === document.scrollingElement || scrollNode === document.documentElement || scrollNode === document.body;
+
+  const originalScrollY = isMainScroll ? window.scrollY : scrollNode.scrollTop;
   const originalOverflow = document.documentElement.style.overflow;
   const originalScrollBehavior = document.documentElement.style.scrollBehavior;
 
   document.documentElement.style.scrollBehavior = 'auto';
+  if (!isMainScroll) scrollNode.style.scrollBehavior = 'auto';
 
-  const initialTotalHeight = Math.max(
-    document.body.scrollHeight, document.documentElement.scrollHeight,
-    document.body.offsetHeight, document.documentElement.offsetHeight,
-    document.body.clientHeight, document.documentElement.clientHeight
-  );
+  const setScroll = (y) => isMainScroll ? window.scrollTo(0, y) : (scrollNode.scrollTop = y);
+  const getScroll = () => isMainScroll ? window.scrollY : scrollNode.scrollTop;
+
+  const initialTotalHeight = isMainScroll 
+    ? Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)
+    : scrollNode.scrollHeight;
 
   const viewportHeight = document.documentElement.clientHeight;
   const viewportWidth = document.documentElement.clientWidth;
 
   const frames = [];
 
-  window.scrollTo(0, 0);
+  setScroll(0);
   await wait(600);
 
   while (true) {
-    const currentScrollY = window.scrollY;
+    const currentScrollY = getScroll();
 
     let maxScroll = initialTotalHeight - viewportHeight;
     if (maxScroll <= 0) maxScroll = 1;
@@ -134,11 +159,11 @@
     }
 
     const nextYPos = currentScrollY + viewportHeight;
-    window.scrollTo(0, nextYPos);
+    setScroll(nextYPos);
     await wait(400);
     await waitForPaint();
 
-    const newScrollY = window.scrollY;
+    const newScrollY = getScroll();
 
     if (newScrollY <= currentScrollY) {
       break;
@@ -148,7 +173,7 @@
   textLabel.innerText = 'Processing...';
 
   restoreFixedElements();
-  window.scrollTo(originalScrollX, originalScrollY);
+  setScroll(originalScrollY);
   document.documentElement.style.scrollBehavior = originalScrollBehavior;
   document.documentElement.style.overflow = originalOverflow;
 
