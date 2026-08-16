@@ -3,9 +3,9 @@
   window.isCapturingScreenshot = true;
 
   const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
   const waitForPaint = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
-  // Inject keyframes for popup spinner
   const style = document.createElement('style');
   style.textContent = `
     @keyframes oneclick-spin {
@@ -14,7 +14,6 @@
   `;
   document.head.appendChild(style);
 
-  // Create floating popup
   const popup = document.createElement('div');
   popup.style.cssText = `
     position: fixed;
@@ -36,7 +35,7 @@
     align-items: center;
     gap: 14px;
   `;
-  
+
   const spinner = document.createElement('div');
   spinner.style.cssText = `
     width: 20px;
@@ -46,22 +45,24 @@
     border-radius: 50%;
     animation: oneclick-spin 1s linear infinite;
   `;
-  
+
   const textLabel = document.createElement('span');
   textLabel.innerText = 'Preparing capture...';
-  
+
   popup.appendChild(spinner);
   popup.appendChild(textLabel);
   document.documentElement.appendChild(popup);
 
   const hiddenElements = [];
+
   const hideFixedElements = () => {
     const elements = document.querySelectorAll('*');
+
     for (const el of elements) {
       const computedStyle = window.getComputedStyle(el);
-      // Exclude our own popup from being hidden permanently
+
       if (el === popup || popup.contains(el)) continue;
-      
+
       if ((computedStyle.position === 'fixed' || computedStyle.position === 'sticky') && computedStyle.opacity !== '0') {
         hiddenElements.push({ el, opacity: el.style.opacity });
         el.style.opacity = '0';
@@ -79,7 +80,7 @@
   const originalScrollY = window.scrollY;
   const originalOverflow = document.documentElement.style.overflow;
   const originalScrollBehavior = document.documentElement.style.scrollBehavior;
-  
+
   document.documentElement.style.scrollBehavior = 'auto';
 
   const initialTotalHeight = Math.max(
@@ -87,57 +88,57 @@
     document.body.offsetHeight, document.documentElement.offsetHeight,
     document.body.clientHeight, document.documentElement.clientHeight
   );
-  
+
   const viewportHeight = document.documentElement.clientHeight;
   const viewportWidth = document.documentElement.clientWidth;
 
   const frames = [];
 
   window.scrollTo(0, 0);
-  await wait(600); 
+  await wait(600);
 
   while (true) {
     const currentScrollY = window.scrollY;
-    
-    // Calculate and update progress
+
     let maxScroll = initialTotalHeight - viewportHeight;
-    if (maxScroll <= 0) maxScroll = 1; // prevent division by zero
+    if (maxScroll <= 0) maxScroll = 1;
+
     let progress = Math.min(100, Math.round((currentScrollY / maxScroll) * 100));
     textLabel.innerText = `Capturing... ${progress}%`;
 
     popup.style.visibility = 'hidden';
     await waitForPaint();
-    
+
     const response = await chrome.runtime.sendMessage({ action: 'capture_visible_tab' });
-    
+
     popup.style.visibility = 'visible';
 
     if (response && response.dataUrl) {
       frames.push({
-        yPos: currentScrollY, 
+        yPos: currentScrollY,
         dataUrl: response.dataUrl
       });
     } else if (response && response.error) {
       break;
     }
-    
+
     if (currentScrollY === 0) {
-        hideFixedElements();
+      hideFixedElements();
     }
 
     if (currentScrollY + viewportHeight >= initialTotalHeight) {
-        break; 
+      break;
     }
 
-    let nextYPos = currentScrollY + viewportHeight;
+    const nextYPos = currentScrollY + viewportHeight;
     window.scrollTo(0, nextYPos);
     await wait(400);
     await waitForPaint();
-    
+
     const newScrollY = window.scrollY;
-    
+
     if (newScrollY <= currentScrollY) {
-        break;
+      break;
     }
   }
 
@@ -147,20 +148,19 @@
   window.scrollTo(originalScrollX, originalScrollY);
   document.documentElement.style.scrollBehavior = originalScrollBehavior;
   document.documentElement.style.overflow = originalOverflow;
-  
-  // Cleanup
+
   popup.remove();
   style.remove();
   window.isCapturingScreenshot = false;
 
-  await chrome.storage.local.set({ 
+  await chrome.storage.local.set({
     capturedFrames: frames,
     captureDimensions: {
-        width: viewportWidth,
-        height: initialTotalHeight,
-        viewportHeight: viewportHeight
+      width: viewportWidth,
+      height: initialTotalHeight,
+      viewportHeight: viewportHeight
     }
   });
-  
+
   chrome.runtime.sendMessage({ action: 'capture_complete' });
 })();
