@@ -1,9 +1,9 @@
 function updateActionState(tabId, url) {
   if (!url) return;
-  const isRestricted = url.startsWith('chrome://') || 
-                       url.startsWith('https://chrome.google.com/webstore') || 
-                       url.startsWith('https://chromewebstore.google.com/');
-  
+  const isRestricted = url.startsWith('chrome://') ||
+    url.startsWith('https://chrome.google.com/webstore') ||
+    url.startsWith('https://chromewebstore.google.com/');
+
   chrome.action.setPopup({
     tabId: tabId,
     popup: isRestricted ? 'error.html' : ''
@@ -35,7 +35,10 @@ chrome.action.onClicked.addListener(async (tab) => {
       files: ['content.js']
     });
   } catch (err) {
-    console.error(err);
+    chrome.action.setPopup({
+      tabId: tab.id,
+      popup: 'error.html'
+    });
   }
 });
 
