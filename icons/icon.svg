@@ -1,7 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
-  <rect width="512" height="512" rx="110" ry="110" fill="white"/>
-  <g transform="translate(56, 56) scale(16.667)" fill="none" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M6.6 3v9.6c0 1.68 0 2.52.327 3.162a3 3 0 0 0 1.311 1.311c.642.327 1.482.327 3.162.327H21"/>
-    <path d="M9.2 6.6h3.4c1.68 0 2.52 0 3.162.327a3 3 0 0 1 1.311 1.311c.327.642.327 1.482.327 3.162v3.4M6.6 6.6H3M17.4 21v-3.6"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background Squircle -->
+  <rect width="512" height="512" rx="115" fill="#3b82f6" />
+
+  <!-- Browser Window Body (Absolute coordinates instead of transform) -->
+  <rect x="80" y="100" width="352" height="312" rx="24" fill="#ffffff" opacity="0.95" />
+  
+  <!-- Browser Top Bar -->
+  <path d="M 80 124 C 80 110.745 90.745 100 104 100 L 408 100 C 421.255 100 432 110.745 432 124 L 432 156 L 80 156 Z" fill="#f1f5f9" />
+  
+  <!-- Browser Dots -->
+  <circle cx="108" cy="128" r="8" fill="#ef4444" />
+  <circle cx="136" cy="128" r="8" fill="#f59e0b" />
+  <circle cx="164" cy="128" r="8" fill="#10b981" />
+  
+  <!-- Wireframe webpage content lines -->
+  <rect x="112" y="188" width="288" height="16" rx="8" fill="#e2e8f0" />
+  <rect x="112" y="228" width="200" height="12" rx="6" fill="#e2e8f0" />
+  <rect x="112" y="256" width="240" height="12" rx="6" fill="#e2e8f0" />
+
+  <!-- Camera Top Bump (Flash / Viewfinder) -->
+  <rect x="212" y="174" width="88" height="40" rx="16" fill="#1e293b" />
+  <!-- Camera Flash -->
+  <rect x="236" y="182" width="40" height="8" rx="4" fill="#475569" />
+
+  <!-- Main Camera Body -->
+  <rect x="156" y="194" width="200" height="136" rx="32" fill="#1e293b" />
+  
+  <!-- Main Lens -->
+  <circle cx="256" cy="260" r="42" fill="#38bdf8" />
+  
+  <!-- Inner Lens Reflection -->
+  <circle cx="268" cy="248" r="14" fill="#bae6fd" opacity="0.8" />
+  <circle cx="256" cy="260" r="28" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.3" />
 </svg>
