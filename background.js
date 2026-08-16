@@ -1,18 +1,30 @@
-chrome.action.onClicked.addListener(async (tab) => {
-  if (tab.url.startsWith('chrome://') || tab.url.startsWith('https://chrome.google.com/webstore') || tab.url.startsWith('https://chromewebstore.google.com/')) {
-    const width = 450;
-    const height = 300;
-    chrome.windows.create({
-      url: chrome.runtime.getURL('error.html'),
-      type: 'popup',
-      width: width,
-      height: height,
-      left: Math.round((tab.width || 1000) / 2 - width / 2),
-      top: Math.round((tab.height || 800) / 2 - height / 2)
-    });
-    return;
-  }
+function updateActionState(tabId, url) {
+  if (!url) return;
+  const isRestricted = url.startsWith('chrome://') || 
+                       url.startsWith('https://chrome.google.com/webstore') || 
+                       url.startsWith('https://chromewebstore.google.com/');
+  
+  chrome.action.setPopup({
+    tabId: tabId,
+    popup: isRestricted ? 'error.html' : ''
+  });
+}
 
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.url) {
+    updateActionState(tabId, changeInfo.url);
+  }
+});
+
+chrome.tabs.onActivated.addListener(({ tabId }) => {
+  chrome.tabs.get(tabId, (tab) => {
+    if (tab && tab.url) {
+      updateActionState(tabId, tab.url);
+    }
+  });
+});
+
+chrome.action.onClicked.addListener(async (tab) => {
   try {
     const sessionId = Date.now().toString();
 
