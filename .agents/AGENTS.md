@@ -45,10 +45,13 @@ OneClick_Webpage_Screenshot/
 │   ├── promo_screenshot.jpg # Generated 1280x800 main promotional screenshot.
 │   └── promo_screenshot_features.jpg # Generated 1280x800 features promotional screenshot.
 ├── background.js            # Service worker. Handles chrome.action.onClicked, captureVisibleTab calls,
-│                            # and opens the result tab when capture is complete.
-├── content.js               # Injected into the active tab. Creates the clean white-themed progress popup,
-│                            # hides fixed/sticky elements, scrolls the page, coordinates frame captures
-│                            # via message passing to background.js, and saves frames to chrome.storage.local.
+│                            # sets popup to loading.html during capture, and opens the result tab when complete.
+├── content.js               # Injected into the active tab. Scrolls the page, captures frames via message
+│                            # passing to background.js, writes progress to chrome.storage.local, and saves
+│                            # frames when complete. No DOM injection.
+├── error.html               # Native popup shown on restricted pages (chrome://, chrome-extension://, Web Store).
+├── loading.html             # Native popup shown during capture. Polls chrome.storage for progress.
+├── loading.js               # Script for loading.html. Polls captureProgress and captureComplete from storage.
 ├── manifest.json            # Manifest V3 configuration. Declares name, permissions, icons,
 │                            # service worker, and action.
 ├── result.css               # Styles for result.html. Dark card design with download buttons.
@@ -84,13 +87,21 @@ Responsibilities:
 - Handles `capture_visible_tab` messages from `content.js` and calls `chrome.tabs.captureVisibleTab`.
 - Listens for `capture_complete` message and opens `result.html` in a new tab.
 
+### `loading.html` + `loading.js`
+Native extension popup shown as the action popup during an active capture session.
+`background.js` sets the popup to `loading.html` when capture starts and resets it to `''` when done.
+`loading.js` polls `chrome.storage.local` every 250ms for `captureProgress` (0–100) and `captureComplete` (boolean), closing the popup automatically when the capture finishes.
+
+### `error.html`
+Native extension popup shown when the user clicks the icon on restricted pages (`chrome://`, `chrome-extension://`, Web Store). Uses the Myna UI `danger-triangle` icon.
+
 ### `content.js`
 Injected into the active tab by the service worker. Runs as an IIFE and guards against double-injection with `window.isCapturingScreenshot`.
 Responsibilities:
-- Creates the glassmorphism animated progress popup injected into the page DOM.
 - Hides all `position: fixed` and `position: sticky` elements before the second+ screenshots to prevent header repetition.
 - Scrolls the page top-to-bottom in `clientHeight` increments.
-- Hides the popup, waits for a double `requestAnimationFrame` paint, then sends `capture_visible_tab` to `background.js`.
+- Writes `captureProgress` to `chrome.storage.local` for `loading.html` to display.
+- Waits for a double `requestAnimationFrame` paint, then sends `capture_visible_tab` to `background.js`.
 - Saves all frames and dimensions to `chrome.storage.local`.
 - Sends `capture_complete` to trigger the result page.
 

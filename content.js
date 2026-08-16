@@ -9,51 +9,6 @@
 
   const waitForPaint = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes oneclick-spin {
-      to { transform: rotate(360deg); }
-    }
-  `;
-  document.head.appendChild(style);
-
-  const popup = document.createElement('div');
-  popup.style.cssText = `
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    color: #0f172a;
-    padding: 16px 24px;
-    border-radius: 12px;
-    font-family: system-ui, -apple-system, sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    z-index: 2147483647;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  `;
-
-  const spinner = document.createElement('div');
-  spinner.style.cssText = `
-    width: 20px;
-    height: 20px;
-    border: 3px solid #e2e8f0;
-    border-top-color: #3b82f6;
-    border-radius: 50%;
-    animation: oneclick-spin 1s linear infinite;
-  `;
-
-  const textLabel = document.createElement('span');
-  textLabel.innerText = 'Preparing capture...';
-
-  popup.appendChild(spinner);
-  popup.appendChild(textLabel);
-  document.documentElement.appendChild(popup);
-
   const hiddenElements = [];
 
   const hideFixedElements = () => {
@@ -61,8 +16,6 @@
 
     for (const el of elements) {
       const computedStyle = window.getComputedStyle(el);
-
-      if (el === popup || popup.contains(el)) continue;
 
       if ((computedStyle.position === 'fixed' || computedStyle.position === 'sticky') && computedStyle.opacity !== '0') {
         hiddenElements.push({ el, opacity: el.style.opacity });
@@ -111,7 +64,7 @@
   const setScroll = (y) => isMainScroll ? window.scrollTo(0, y) : (scrollNode.scrollTop = y);
   const getScroll = () => isMainScroll ? window.scrollY : scrollNode.scrollTop;
 
-  const initialTotalHeight = isMainScroll 
+  const initialTotalHeight = isMainScroll
     ? Math.max(
         document.body.scrollHeight, document.documentElement.scrollHeight,
         document.body.offsetHeight, document.documentElement.offsetHeight,
@@ -137,14 +90,11 @@
     if (maxScroll <= 0) maxScroll = 1;
 
     let progress = Math.min(100, Math.round((currentScrollY / maxScroll) * 100));
-    textLabel.innerText = `Capturing... ${progress}%`;
+    await chrome.storage.local.set({ captureProgress: progress });
 
-    popup.style.visibility = 'hidden';
     await waitForPaint();
 
     const response = await chrome.runtime.sendMessage({ action: 'capture_visible_tab' });
-
-    popup.style.visibility = 'visible';
 
     if (response && response.dataUrl) {
       frames.push({
@@ -175,15 +125,11 @@
     }
   }
 
-  textLabel.innerText = 'Processing...';
-
   restoreFixedElements();
   setScroll(originalScrollY);
   document.documentElement.style.scrollBehavior = originalScrollBehavior;
   document.documentElement.style.overflow = originalOverflow;
 
-  popup.remove();
-  style.remove();
   window.isCapturingScreenshot = false;
 
   const rect = isMainScroll ? null : scrollNode.getBoundingClientRect();

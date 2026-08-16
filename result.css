@@ -36,7 +36,7 @@ body {
   background: var(--card-bg);
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border);
   text-align: center;
 }
 
@@ -77,7 +77,6 @@ body {
 
 .btn-primary:hover {
   background-color: var(--primary-hover);
-  transform: translateY(-1px);
 }
 
 .btn-secondary {
@@ -86,14 +85,26 @@ body {
 
 .btn-secondary:hover {
   background-color: var(--secondary-hover);
-  transform: translateY(-1px);
+}
+
+.btn-donate {
+  background-color: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.btn-donate:hover {
+  background-color: #ffe4e6;
+  color: #be123c;
 }
 
 .preview-container {
   background: var(--card-bg);
   border-radius: 12px;
   padding: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border);
   overflow: auto;
   display: flex;
   justify-content: center;

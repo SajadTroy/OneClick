@@ -19,8 +19,8 @@
       text-align: center;
     }
     .icon {
-      background: #fee2e2;
-      color: #ef4444;
+      background: #dbeafe;
+      color: #3b82f6;
       width: 40px;
       height: 40px;
       border-radius: 50%;
@@ -28,6 +28,17 @@
       justify-content: center;
       align-items: center;
       margin: 0 auto 0.75rem;
+    }
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2.5px solid #bfdbfe;
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
     h1 {
       font-size: 1.1rem;
@@ -44,9 +55,10 @@
 </head>
 <body>
   <div class="icon">
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8.5V14m0 3.247v-.5m-6.02-5.985C8.608 5.587 9.92 3 12 3s3.393 2.587 6.02 7.762l.327.644c2.182 4.3 3.274 6.45 2.287 8.022C19.648 21 17.208 21 12.327 21h-.654c-4.88 0-7.321 0-8.307-1.572s.105-3.722 2.287-8.022z"/></svg>
+    <div class="spinner" id="spinner"></div>
   </div>
-  <h1>Cannot Capture</h1>
-  <p>Chrome restricts screenshots on system pages and the Web Store.</p>
+  <h1>Capturing Page</h1>
+  <p id="status">Preparing capture...</p>
+  <script src="loading.js"></script>
 </body>
 </html>
