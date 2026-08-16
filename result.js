@@ -32,32 +32,56 @@ document.addEventListener('DOMContentLoaded', async () => {
     const firstImg = await loadImage(capturedFrames[0].dataUrl);
     const windowWidth = captureDimensions.windowWidth || captureDimensions.width;
     const scale = firstImg.width / windowWidth;
-    const totalHeight = captureDimensions.height * scale;
+    const cropRect = captureDimensions.cropRect;
 
-    canvas.width = captureDimensions.width * scale;
+    const headerHeight = cropRect ? cropRect.top : 0;
+    const footerHeight = cropRect ? captureDimensions.windowHeight - cropRect.bottom : 0;
+    
+    const totalHeight = cropRect 
+      ? (headerHeight + captureDimensions.height + footerHeight) * scale
+      : captureDimensions.height * scale;
+
+    canvas.width = windowWidth * scale;
     canvas.height = totalHeight;
 
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     let drawY = 0;
-    const cropRect = captureDimensions.cropRect;
-
-    const sx = cropRect ? cropRect.left * scale : 0;
-    const sy = cropRect ? cropRect.top * scale : 0;
-    const sw = canvas.width;
-    const sh = captureDimensions.viewportHeight * scale;
 
     for (let i = 0; i < capturedFrames.length; i++) {
       const img = await loadImage(capturedFrames[i].dataUrl);
 
-      if (i < capturedFrames.length - 1) {
-        ctx.drawImage(img, sx, sy, sw, sh, 0, drawY, sw, sh);
-        drawY += sh;
+      if (!cropRect) {
+        if (i < capturedFrames.length - 1) {
+          ctx.drawImage(img, 0, drawY);
+          drawY += img.height;
+        } else {
+          const remaining = totalHeight - drawY;
+          const srcY = img.height - remaining;
+          ctx.drawImage(img, 0, srcY, img.width, remaining, 0, drawY, img.width, remaining);
+        }
       } else {
-        const remaining = totalHeight - drawY;
-        const srcY = sy + sh - remaining;
-        ctx.drawImage(img, sx, srcY, sw, remaining, 0, drawY, sw, remaining);
+        const sx = 0;
+        const sw = img.width;
+
+        if (i === 0) {
+          const sy = 0;
+          const sh = cropRect.bottom * scale;
+          ctx.drawImage(img, sx, sy, sw, sh, 0, drawY, sw, sh);
+          drawY += sh;
+        } else if (i < capturedFrames.length - 1) {
+          const sy = cropRect.top * scale;
+          const sh = cropRect.height * scale;
+          ctx.drawImage(img, sx, sy, sw, sh, 0, drawY, sw, sh);
+          drawY += sh;
+        } else {
+          const remaining = totalHeight - drawY;
+          const sy = img.height - remaining;
+          const sh = remaining;
+          ctx.drawImage(img, sx, sy, sw, sh, 0, drawY, sw, sh);
+          drawY += sh;
+        }
       }
     }
 

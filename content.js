@@ -195,10 +195,11 @@
       frames,
       dimensions: {
         windowWidth: viewportWidth,
+        windowHeight: viewportHeight,
         width: stepWidth,
         height: initialTotalHeight,
         viewportHeight: stepHeight,
-        cropRect: rect ? { top: rect.top, left: rect.left, width: rect.width, height: rect.height } : null
+        cropRect: rect ? { top: rect.top, left: rect.left, width: rect.width, height: rect.height, bottom: rect.bottom, right: rect.right } : null
       }
     }
   });
