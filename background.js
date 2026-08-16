@@ -16,27 +16,55 @@ chrome.tabs.onActivated.addListener(({ tabId }) => {
   });
 });
 
+async function injectErrorPopup(tabId) {
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId: tabId },
+      func: () => {
+        const popup = document.createElement('div');
+        popup.style.cssText = `
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          background: #ffffff;
+          border: 1px solid #fca5a5;
+          color: #0f172a;
+          padding: 16px 24px;
+          border-radius: 12px;
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 15px;
+          font-weight: 500;
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+          z-index: 2147483647;
+          display: flex;
+          align-items: center;
+          gap: 14px;
+        `;
+        popup.innerHTML = `
+          <div style="width: 20px; height: 20px; background: #ef4444; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px;">!</div>
+          Cannot capture this restricted page.
+        `;
+        document.body.appendChild(popup);
+        setTimeout(() => popup.remove(), 4000);
+      }
+    });
+  } catch (err) {
+    chrome.notifications.create({
+      type: 'basic',
+      iconUrl: 'icons/icon128.png',
+      title: 'OneClick Screenshot',
+      message: 'Chrome security prevents capturing system pages or the Web Store.'
+    });
+  }
+}
+
 chrome.action.onClicked.addListener(async (tab) => {
   const isRestricted = tab.url.startsWith('chrome://') || 
                        tab.url.startsWith('https://chrome.google.com/webstore') || 
                        tab.url.startsWith('https://chromewebstore.google.com/');
 
   if (isRestricted) {
-    chrome.windows.getCurrent((currentWindow) => {
-      const width = 340;
-      const height = 240;
-      const left = Math.round(currentWindow.left + currentWindow.width - width - 30);
-      const top = Math.round(currentWindow.top + currentWindow.height - height - 30);
-      
-      chrome.windows.create({
-        url: chrome.runtime.getURL('error.html'),
-        type: 'popup',
-        width: width,
-        height: height,
-        left: left,
-        top: top
-      });
-    });
+    await injectErrorPopup(tab.id);
     return;
   }
 
@@ -50,21 +78,7 @@ chrome.action.onClicked.addListener(async (tab) => {
       files: ['content.js']
     });
   } catch (err) {
-    chrome.windows.getCurrent((currentWindow) => {
-      const width = 340;
-      const height = 240;
-      const left = Math.round(currentWindow.left + currentWindow.width - width - 30);
-      const top = Math.round(currentWindow.top + currentWindow.height - height - 30);
-      
-      chrome.windows.create({
-        url: chrome.runtime.getURL('error.html'),
-        type: 'popup',
-        width: width,
-        height: height,
-        left: left,
-        top: top
-      });
-    });
+    await injectErrorPopup(tab.id);
   }
 });
 
