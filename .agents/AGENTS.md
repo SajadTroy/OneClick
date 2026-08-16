@@ -1,5 +1,10 @@
 # Project Rules
 
+## Agent Behavior
+
+- **Never push or commit to git automatically**. You may write code and modify files, but never execute `git commit` or `git push`. The user will handle all version control manually.
+- **Maintain AGENTS.md**: Whenever you create, update, rename, or delete files and folders in the project, you must immediately update the `Project Structure` and `File Responsibilities` sections in `.agents/AGENTS.md` to accurately reflect those changes.
+
 ## Code Style
 
 - Never include comments in any code file. No inline comments, no block comments, no JSDoc.
@@ -35,9 +40,13 @@ OneClick_Webpage_Screenshot/
 │   └── icon128.png          # 128×128 icon used in the Chrome Web Store listing.
 ├── lib/
 │   └── jspdf.umd.min.js     # Local copy of jsPDF v2.5.1 used for PDF export in result.js.
+├── src/                     # Promotional assets for the Chrome Web Store.
+│   ├── promo2.html          # HTML source code for the features promotional screenshot.
+│   ├── promo_screenshot.jpg # Generated 1280x800 main promotional screenshot.
+│   └── promo_screenshot_features.jpg # Generated 1280x800 features promotional screenshot.
 ├── background.js            # Service worker. Handles chrome.action.onClicked, captureVisibleTab calls,
 │                            # and opens the result tab when capture is complete.
-├── content.js               # Injected into the active tab. Creates the glassmorphism progress popup,
+├── content.js               # Injected into the active tab. Creates the clean white-themed progress popup,
 │                            # hides fixed/sticky elements, scrolls the page, coordinates frame captures
 │                            # via message passing to background.js, and saves frames to chrome.storage.local.
 ├── manifest.json            # Manifest V3 configuration. Declares name, permissions, icons,
@@ -48,7 +57,9 @@ OneClick_Webpage_Screenshot/
 ├── result.js                # Retrieves captured frames from chrome.storage.local, stitches them onto
 │                            # a <canvas> using cumulative height stacking (no yPos math), and handles
 │                            # PNG and PDF download logic including multi-page PDF pagination.
+├── CHANGELOG.md             # Version history documenting all notable changes to the extension.
 ├── LICENSE                  # MIT License. Copyright SajadTroy 2026.
+├── OneClick_v1.0.0.zip      # The finalized packed extension ready for Web Store upload.
 └── README.md                # Project documentation. Covers features, developer installation,
                              # usage instructions, and sponsor badge.
 ```
