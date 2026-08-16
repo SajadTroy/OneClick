@@ -1,10 +1,14 @@
 chrome.action.onClicked.addListener(async (tab) => {
-  if (tab.url.startsWith('chrome://') || tab.url.startsWith('https://chrome.google.com/webstore')) {
-    chrome.notifications.create({
-      type: 'basic',
-      iconUrl: 'icons/icon48.png',
-      title: 'Action Restricted',
-      message: 'Cannot capture Chrome system pages or the Web Store.'
+  if (tab.url.startsWith('chrome://') || tab.url.startsWith('https://chrome.google.com/webstore') || tab.url.startsWith('https://chromewebstore.google.com/')) {
+    const width = 450;
+    const height = 300;
+    chrome.windows.create({
+      url: chrome.runtime.getURL('error.html'),
+      type: 'popup',
+      width: width,
+      height: height,
+      left: Math.round((tab.width || 1000) / 2 - width / 2),
+      top: Math.round((tab.height || 800) / 2 - height / 2)
     });
     return;
   }
