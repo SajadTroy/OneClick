@@ -10,5 +10,5 @@ All notable changes to the OneClick Webpage Screenshot extension will be documen
 - **High-Fidelity Exports:** Downloads perfectly stitched, crisp images in both PNG and PDF (unscaled, 0.98 JPEG quality) formats.
 - **Smart Naming:** Automatically names the downloaded files based on the sanitized webpage title.
 - **Graceful Error Handling:** Shows a sleek, native extension popup if the user attempts to capture restricted Chrome system pages or the Web Store.
-- **Modern UI:** Features a glassmorphism loading indicator during captures and a clean dark-mode result preview page.
+- **Modern UI:** Features a clean, white-themed loading indicator during captures and a clean dark-mode result preview page.
 - **Custom Logo:** A sleek, minimalist camera icon.

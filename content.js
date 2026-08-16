@@ -22,17 +22,15 @@
     position: fixed;
     bottom: 30px;
     right: 30px;
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
     padding: 16px 24px;
     border-radius: 12px;
     font-family: system-ui, -apple-system, sans-serif;
     font-size: 15px;
     font-weight: 500;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     z-index: 2147483647;
     display: flex;
     align-items: center;
@@ -43,7 +41,7 @@
   spinner.style.cssText = `
     width: 20px;
     height: 20px;
-    border: 3px solid rgba(255,255,255,0.2);
+    border: 3px solid #e2e8f0;
     border-top-color: #3b82f6;
     border-radius: 50%;
     animation: oneclick-spin 1s linear infinite;
