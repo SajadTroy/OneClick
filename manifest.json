@@ -8,8 +8,7 @@
     "scripting",
     "storage",
     "unlimitedStorage",
-    "downloads",
-    "notifications"
+    "downloads"
   ],
   "host_permissions": [
     "<all_urls>"
