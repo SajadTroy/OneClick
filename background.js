@@ -1,9 +1,11 @@
 chrome.action.onClicked.addListener(async (tab) => {
   if (tab.url.startsWith('chrome://') || tab.url.startsWith('https://chrome.google.com/webstore')) {
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: () => alert('Cannot capture restricted Chrome pages.')
-    }).catch(e => console.error(e));
+    chrome.notifications.create({
+      type: 'basic',
+      iconUrl: 'icons/icon48.png',
+      title: 'Action Restricted',
+      message: 'Cannot capture Chrome system pages or the Web Store.'
+    });
     return;
   }
 
