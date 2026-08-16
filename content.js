@@ -114,11 +114,18 @@
   const getScroll = () => isMainScroll ? window.scrollY : scrollNode.scrollTop;
 
   const initialTotalHeight = isMainScroll 
-    ? Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)
+    ? Math.max(
+        document.body.scrollHeight, document.documentElement.scrollHeight,
+        document.body.offsetHeight, document.documentElement.offsetHeight,
+        document.body.clientHeight, document.documentElement.clientHeight
+      )
     : scrollNode.scrollHeight;
 
   const viewportHeight = document.documentElement.clientHeight;
   const viewportWidth = document.documentElement.clientWidth;
+
+  const stepHeight = isMainScroll ? viewportHeight : scrollNode.clientHeight;
+  const stepWidth = isMainScroll ? viewportWidth : scrollNode.clientWidth;
 
   const frames = [];
 
@@ -128,7 +135,7 @@
   while (true) {
     const currentScrollY = getScroll();
 
-    let maxScroll = initialTotalHeight - viewportHeight;
+    let maxScroll = initialTotalHeight - stepHeight;
     if (maxScroll <= 0) maxScroll = 1;
 
     let progress = Math.min(100, Math.round((currentScrollY / maxScroll) * 100));
@@ -154,11 +161,11 @@
       hideFixedElements();
     }
 
-    if (currentScrollY + viewportHeight >= initialTotalHeight) {
+    if (currentScrollY + stepHeight >= initialTotalHeight) {
       break;
     }
 
-    const nextYPos = currentScrollY + viewportHeight;
+    const nextYPos = currentScrollY + stepHeight;
     setScroll(nextYPos);
     await wait(400);
     await waitForPaint();
@@ -181,13 +188,17 @@
   style.remove();
   window.isCapturingScreenshot = false;
 
+  const rect = isMainScroll ? null : scrollNode.getBoundingClientRect();
+
   await chrome.storage.local.set({
     [sessionKey]: {
       frames,
       dimensions: {
-        width: viewportWidth,
+        windowWidth: viewportWidth,
+        width: stepWidth,
         height: initialTotalHeight,
-        viewportHeight: viewportHeight
+        viewportHeight: stepHeight,
+        cropRect: rect ? { top: rect.top, left: rect.left, width: rect.width, height: rect.height } : null
       }
     }
   });
