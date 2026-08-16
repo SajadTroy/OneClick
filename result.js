@@ -24,25 +24,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const firstImg = await loadImage(capturedFrames[0].dataUrl);
         const scale = firstImg.width / captureDimensions.width;
-        
-        canvas.width = firstImg.width;
-        canvas.height = captureDimensions.height * scale;
+        const totalHeight = captureDimensions.height * scale;
 
-        // Fill background with white to prevent any transparent lines
-        ctx.fillStyle = "#ffffff";
+        canvas.width = firstImg.width;
+        canvas.height = totalHeight;
+
+        ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+        let drawY = 0;
+
         for (let i = 0; i < capturedFrames.length; i++) {
-            const frame = capturedFrames[i];
-            const img = await loadImage(frame.dataUrl);
-            
-            // Snap to physical pixels to prevent anti-aliasing gaps
-            let yOffset = Math.floor(frame.yPos * scale);
-            // Overlap by 1 pixel to hide any sub-pixel rendering lines
-            if (i > 0) {
-                yOffset -= 1;
+            const img = await loadImage(capturedFrames[i].dataUrl);
+
+            if (i < capturedFrames.length - 1) {
+                ctx.drawImage(img, 0, drawY);
+                drawY += img.height;
+            } else {
+                const remaining = totalHeight - drawY;
+                const srcY = img.height - remaining;
+                ctx.drawImage(img, 0, srcY, img.width, remaining, 0, drawY, canvas.width, remaining);
             }
-            ctx.drawImage(img, 0, yOffset);
         }
 
         loading.style.display = 'none';
