@@ -9,25 +9,34 @@
 
   const waitForPaint = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
+  const hiddenClass = `__oc_hidden_${Date.now()}__`;
+
+  const hideStyle = document.createElement('style');
+  hideStyle.textContent = `.${hiddenClass} { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }`;
+  document.documentElement.appendChild(hideStyle);
+
   const hiddenElements = [];
+  let fixedHidden = false;
 
   const hideFixedElements = () => {
-    const elements = document.querySelectorAll('*');
+    if (fixedHidden) return;
+    fixedHidden = true;
 
-    for (const el of elements) {
-      const computedStyle = window.getComputedStyle(el);
-
-      if ((computedStyle.position === 'fixed' || computedStyle.position === 'sticky') && computedStyle.opacity !== '0') {
-        hiddenElements.push({ el, opacity: el.style.opacity });
-        el.style.opacity = '0';
+    for (const el of document.querySelectorAll('*')) {
+      if (el === hideStyle) continue;
+      const style = window.getComputedStyle(el);
+      if (style.position === 'fixed' || style.position === 'sticky') {
+        hiddenElements.push(el);
+        el.classList.add(hiddenClass);
       }
     }
   };
 
   const restoreFixedElements = () => {
-    for (const item of hiddenElements) {
-      item.el.style.opacity = item.opacity;
+    for (const el of hiddenElements) {
+      el.classList.remove(hiddenClass);
     }
+    hideStyle.remove();
   };
 
   const getScrollingElement = () => {
@@ -83,6 +92,8 @@
   setScroll(0);
   await wait(600);
 
+  let isFirstFrame = true;
+
   while (true) {
     const currentScrollY = getScroll();
 
@@ -91,6 +102,10 @@
 
     let progress = Math.min(100, Math.round((currentScrollY / maxScroll) * 100));
     await chrome.storage.local.set({ captureProgress: progress });
+
+    if (!isFirstFrame) {
+      hideFixedElements();
+    }
 
     await waitForPaint();
 
@@ -105,9 +120,7 @@
       break;
     }
 
-    if (currentScrollY === 0) {
-      hideFixedElements();
-    }
+    isFirstFrame = false;
 
     if (currentScrollY + stepHeight >= initialTotalHeight) {
       break;
