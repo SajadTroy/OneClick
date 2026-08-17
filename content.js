@@ -18,6 +18,13 @@
   const hiddenElements = [];
   let fixedHidden = false;
 
+  const addHidden = (el) => {
+    if (!el.classList.contains(hiddenClass)) {
+      hiddenElements.push(el);
+      el.classList.add(hiddenClass);
+    }
+  };
+
   const hideFixedElements = () => {
     if (fixedHidden) return;
     fixedHidden = true;
@@ -26,8 +33,31 @@
       if (el === hideStyle) continue;
       const style = window.getComputedStyle(el);
       if (style.position === 'fixed' || style.position === 'sticky') {
-        hiddenElements.push(el);
-        el.classList.add(hiddenClass);
+        addHidden(el);
+      }
+    }
+
+    if (!isMainScroll) {
+      let node = scrollNode;
+      let depth = 0;
+
+      while (node && depth < 10) {
+        const parent = node.parentElement;
+        if (!parent || parent === document.body || parent === document.documentElement) break;
+
+        const parentStyle = window.getComputedStyle(parent);
+        if (parentStyle.display === 'flex' || parentStyle.display === 'grid') {
+          for (const sibling of parent.children) {
+            if (sibling === node) continue;
+            const sibStyle = window.getComputedStyle(sibling);
+            if (sibStyle.display !== 'none' && sibStyle.visibility !== 'hidden') {
+              addHidden(sibling);
+            }
+          }
+        }
+
+        node = parent;
+        depth++;
       }
     }
   };

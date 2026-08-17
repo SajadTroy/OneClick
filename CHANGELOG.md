@@ -4,7 +4,8 @@ All notable changes to the OneClick Webpage Screenshot extension will be documen
 
 ## [1.1.1] - Bug Fix
 ### Fixed
-- **Fixed/Sticky Element Hiding:** Replaced inline `opacity: 0` with a `!important` stylesheet injection using a unique class name. This prevents site CSS (e.g. Google Search's high-specificity rules) from overriding the hide and causing fixed headers/search bars to appear in every stitched frame.
+- **Fixed/Sticky Element Hiding:** Replaced inline `opacity: 0` with a `!important` stylesheet injection using a unique class name. This prevents site CSS (e.g. Google Search) from overriding the hide and causing fixed headers to repeat in every stitched frame.
+- **Inner-Scroll Sidebar Repetition:** For SPA layouts (e.g. ChatGPT), the extension now walks up the DOM from the scrollable container to find the first `flex`/`grid` ancestor and hides all its siblings. This eliminates sidebars and nav rails that are not `position: fixed` but still appear in every captured frame.
 
 ## [1.1.0] - UI Update
 ### Changed
