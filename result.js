@@ -54,36 +54,58 @@ document.addEventListener('DOMContentLoaded', async () => {
       const img = await loadImage(capturedFrames[i].dataUrl);
 
       if (!cropRect) {
-        if (i < capturedFrames.length - 1) {
+        if (i === capturedFrames.length - 1) {
+          const remaining = totalHeight - drawY;
+          let srcY = img.height - remaining;
+          let sh = remaining;
+          if (srcY < 0) {
+            srcY = 0;
+            sh = img.height;
+          }
+          ctx.drawImage(img, 0, srcY, img.width, sh, 0, drawY, img.width, sh);
+          drawY += sh;
+        } else {
           ctx.drawImage(img, 0, drawY);
           drawY += img.height;
-        } else {
-          const remaining = totalHeight - drawY;
-          const srcY = img.height - remaining;
-          ctx.drawImage(img, 0, srcY, img.width, remaining, 0, drawY, img.width, remaining);
         }
       } else {
         const sx = 0;
         const sw = img.width;
 
-        if (i === 0) {
+        if (i === capturedFrames.length - 1) {
+          const remaining = totalHeight - drawY;
+          let sy = img.height - remaining;
+          let sh = remaining;
+          if (sy < 0) {
+            sy = 0;
+            sh = img.height;
+          }
+          ctx.drawImage(img, sx, sy, sw, sh, 0, drawY, sw, sh);
+          drawY += sh;
+        } else if (i === 0) {
           const sy = 0;
           const sh = cropRect.bottom * scale;
           ctx.drawImage(img, sx, sy, sw, sh, 0, drawY, sw, sh);
           drawY += sh;
-        } else if (i < capturedFrames.length - 1) {
+        } else {
           const sy = cropRect.top * scale;
           const sh = cropRect.height * scale;
           ctx.drawImage(img, sx, sy, sw, sh, 0, drawY, sw, sh);
           drawY += sh;
-        } else {
-          const remaining = totalHeight - drawY;
-          const sy = img.height - remaining;
-          const sh = remaining;
-          ctx.drawImage(img, sx, sy, sw, sh, 0, drawY, sw, sh);
-          drawY += sh;
         }
       }
+    }
+
+    if (Math.round(drawY) < Math.round(canvas.height)) {
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = drawY;
+      tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
+      
+      canvas.height = drawY;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(tempCanvas, 0, 0);
     }
 
     loading.style.display = 'none';

@@ -178,6 +178,8 @@
   const rect = isMainScroll ? null : scrollNode.getBoundingClientRect();
   const pageTitle = document.title || 'Screenshot';
 
+  const actualHeight = frames.length > 0 ? frames[frames.length - 1].yPos + stepHeight : initialTotalHeight;
+
   await chrome.storage.local.set({
     [sessionKey]: {
       title: pageTitle,
@@ -186,7 +188,7 @@
         windowWidth: viewportWidth,
         windowHeight: viewportHeight,
         width: stepWidth,
-        height: initialTotalHeight,
+        height: actualHeight,
         viewportHeight: stepHeight,
         cropRect: rect ? { top: rect.top, left: rect.left, width: rect.width, height: rect.height, bottom: rect.bottom, right: rect.right } : null
       }
