@@ -63,7 +63,8 @@ OneClick_Webpage_Screenshot/
 ├── CHANGELOG.md             # Version history documenting all notable changes to the extension.
 ├── LICENSE                  # MIT License. Copyright SajadTroy 2026.
 ├── OneClick_v1.0.0.zip      # The finalized packed extension ready for Web Store upload.
-└── README.md                # Project documentation. Covers features, developer installation,
+├── PRIVACY.md               # Dedicated Privacy Policy required by Chrome Web Store.
+├── README.md                # Project documentation. Covers features, developer installation,
                              # usage instructions, and sponsor badge.
 ```
 
