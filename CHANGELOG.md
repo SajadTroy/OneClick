@@ -2,6 +2,11 @@
 
 All notable changes to the OneClick Webpage Screenshot extension will be documented in this file.
 
+## [1.1.2] - Policy Compliance & Bug Fixes
+### Fixed
+- **Remote Hosted Code:** Removed external CDN dependencies (cdnjs) and bundled `pdfobject.min.js` locally to comply with Chrome Web Store Manifest V3 security policies.
+- **Privacy Policy:** Created a dedicated, standalone Privacy Policy page to meet Web Store privacy guidelines.
+
 ## [1.1.1] - Bug Fix
 ### Fixed
 - **Fixed/Sticky Element Hiding:** Replaced inline `opacity: 0` with a `!important` stylesheet injection using a unique class name. This prevents site CSS (e.g. Google Search) from overriding the hide and causing fixed headers to repeat in every stitched frame.
