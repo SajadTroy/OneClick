@@ -39,7 +39,8 @@ OneClick_Webpage_Screenshot/
 │   ├── icon48.png           # 48×48 extension icon used in chrome://extensions/.
 │   └── icon128.png          # 128×128 icon used in the Chrome Web Store listing.
 ├── lib/
-│   └── jspdf.umd.min.js     # Local copy of jsPDF v2.5.1 used for PDF export in result.js.
+│   ├── jspdf.umd.min.js     # Local copy of jsPDF v2.5.1 used for PDF export in result.js.
+│   └── pdfobject.min.js     # Local copy of pdfobject used by jsPDF for PDF preview.
 ├── src/                     # Promotional assets for the Chrome Web Store.
 │   ├── promo2.html          # HTML source code for the features promotional screenshot.
 │   ├── promo_screenshot.jpg # Generated 1280x800 main promotional screenshot.
@@ -118,6 +119,9 @@ For PDF export, the canvas is first scaled down to a max width of `1240px` on an
 ### `lib/jspdf.umd.min.js`
 Must be kept local (not loaded from a CDN) to comply with Chrome Extension Content Security Policy.
 Do not upgrade this file without testing PDF export on both short and very long pages.
+
+### `lib/pdfobject.min.js`
+Local copy of pdfobject used by jsPDF for PDF preview. Must be kept local to comply with Chrome Extension Content Security Policy.
 
 ### `icons/icon.svg`
 The canonical source for the extension logo. Regenerate PNGs from this file whenever the logo changes.
