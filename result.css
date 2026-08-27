@@ -87,17 +87,14 @@ body {
   background-color: var(--secondary-hover);
 }
 
-.btn-donate {
-  background-color: #fff1f2;
-  color: #e11d48;
-  border: 1px solid #fecdd3;
-  font-size: 0.9rem;
-  text-decoration: none;
+.bmc-btn-link {
+  display: flex;
+  align-items: center;
+  transition: opacity 0.2s;
 }
 
-.btn-donate:hover {
-  background-color: #ffe4e6;
-  color: #be123c;
+.bmc-btn-link:hover {
+  opacity: 0.9;
 }
 
 .preview-container {

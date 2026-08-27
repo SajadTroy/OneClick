@@ -37,7 +37,8 @@ OneClick_Webpage_Screenshot/
 │   ├── icon.svg             # Source SVG logo. Blue rounded rectangle with browser window + camera lens.
 │   ├── icon16.png           # 16×16 extension icon used in the browser toolbar.
 │   ├── icon48.png           # 48×48 extension icon used in chrome://extensions/.
-│   └── icon128.png          # 128×128 icon used in the Chrome Web Store listing.
+│   ├── icon128.png          # 128×128 icon used in the Chrome Web Store listing.
+│   └── bmc-button.svg       # Buy Me A Coffee button used in result.html.
 ├── lib/
 │   ├── jspdf.umd.min.js     # Local copy of jsPDF v2.5.1 used for PDF export in result.js.
 │   └── pdfobject.min.js     # Local copy of pdfobject used by jsPDF for PDF preview.
