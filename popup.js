@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  const STORE_EXTENSION_ID = 'your_extension_id_here'; // Replace with actual ID later if needed
+  const STORE_EXTENSION_ID = 'mbidegmnoegnpnohaadaokdndnhcdkcg'; // Replace with actual ID later if needed
 
   function getReviewUrl() {
     return `https://chromewebstore.google.com/detail/${STORE_EXTENSION_ID}/reviews`;
