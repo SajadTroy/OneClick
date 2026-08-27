@@ -52,9 +52,9 @@
     .brand-icon img { width: 100%; height: 100%; object-fit: contain; }
     .brand-name { font-size: 12px; font-weight: 700; color: #111; letter-spacing: -0.01em; min-width: 0; flex: 1; }
     
-    .rate-button {
+    .version-badge {
       margin-left: auto;
-      height: 26px;
+      height: 22px;
       padding: 0 8px;
       border: 1px solid rgba(59, 130, 246, 0.22);
       border-radius: 999px;
@@ -62,17 +62,11 @@
       color: #3b82f6;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
       font-family: inherit;
       font-size: 10px;
       font-weight: 700;
-      cursor: pointer;
-      transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
       flex-shrink: 0;
     }
-    .rate-button:hover { background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.44); }
-    .rate-button:active { transform: scale(0.97); }
-    .rate-button svg { width: 12px; height: 12px; fill: currentColor; stroke: currentColor; stroke-width: 1.8; }
 
     .chooser { position: relative; z-index: 2; padding: 0 12px 12px; display: flex; flex-direction: column; gap: 6px; }
     .mode-row {
@@ -116,10 +110,7 @@
     <div class="brand">
       <div class="brand-icon"><img src="icons/icon48.png" alt="OneClick"></div>
       <span class="brand-name">OneClick Screenshot</span>
-      <button class="rate-button" id="rate-us" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.854 3.5a.979.979 0 0 0-1.708 0q-.3.546-.577 1.106a27 27 0 0 0-1.48 3.656c-.139.431-.551.73-1.023.743a29.4 29.4 0 0 0-4.267.425c-.774.136-1.065 1.018-.515 1.556q.188.185.38.365a32 32 0 0 0 3.03 2.527c.367.269.518.73.378 1.152a27 27 0 0 0-1.14 4.927c-.1.755.708 1.288 1.41.928a28.6 28.6 0 0 0 3.98-2.472 1.15 1.15 0 0 1 1.356 0 28.5 28.5 0 0 0 3.98 2.472c.701.36 1.51-.173 1.41-.928q-.058-.425-.127-.845a27 27 0 0 0-1.013-4.082c-.14-.422.01-.883.378-1.152a31.5 31.5 0 0 0 3.41-2.892c.55-.538.26-1.42-.515-1.556a29 29 0 0 0-4.267-.425 1.1 1.1 0 0 1-1.023-.743 27 27 0 0 0-2.057-4.761"/></svg>
-        <span>Rate us</span>
-      </button>
+      <span class="version-badge" id="ext-version"></span>
     </div>
 
     <div class="chooser" id="state-chooser">

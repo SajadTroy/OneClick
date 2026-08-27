@@ -14,18 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  const STORE_EXTENSION_ID = 'mbidegmnoegnpnohaadaokdndnhcdkcg'; // Replace with actual ID later if needed
-
-  function getReviewUrl() {
-    return `https://chromewebstore.google.com/detail/${STORE_EXTENSION_ID}/reviews`;
-  }
-
-  const rateUsBtn = document.getElementById('rate-us');
-  if (rateUsBtn) {
-    rateUsBtn.addEventListener('click', () => {
-      chrome.tabs.create({ url: getReviewUrl() });
-      window.close();
-    });
+  const versionBadge = document.getElementById('ext-version');
+  if (versionBadge && chrome.runtime.getManifest) {
+    versionBadge.textContent = 'v' + chrome.runtime.getManifest().version;
   }
 
   document.querySelectorAll('.mode-row').forEach((btn) => {
