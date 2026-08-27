@@ -14,7 +14,8 @@
     "<all_urls>"
   ],
   "action": {
-    "default_title": "Take Full Page Screenshot"
+    "default_title": "Take Full Page Screenshot",
+    "default_popup": "popup.html"
   },
   "background": {
     "service_worker": "background.js"

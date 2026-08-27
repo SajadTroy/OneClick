@@ -115,15 +115,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     const windowWidth = captureDimensions.windowWidth || captureDimensions.width;
     const scale = firstImg.width / windowWidth;
     const cropRect = captureDimensions.cropRect;
+    const snipRect = captureDimensions.snipRect;
 
-    const headerHeight = cropRect ? cropRect.top : 0;
-    const footerHeight = cropRect ? captureDimensions.windowHeight - cropRect.bottom : 0;
+    let totalHeight;
+    
+    if (snipRect) {
+      totalHeight = snipRect.height * scale;
+      canvas.width = snipRect.width * scale;
+    } else if (cropRect) {
+      const headerHeight = cropRect.top;
+      const footerHeight = captureDimensions.windowHeight - cropRect.bottom;
+      totalHeight = (headerHeight + captureDimensions.height + footerHeight) * scale;
+      canvas.width = windowWidth * scale;
+    } else {
+      totalHeight = captureDimensions.height * scale;
+      canvas.width = windowWidth * scale;
+    }
 
-    const totalHeight = cropRect
-      ? (headerHeight + captureDimensions.height + footerHeight) * scale
-      : captureDimensions.height * scale;
-
-    canvas.width = windowWidth * scale;
     canvas.height = totalHeight;
 
     ctx.fillStyle = '#ffffff';
@@ -134,7 +142,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     for (let i = 0; i < capturedFrames.length; i++) {
       const img = await loadImage(capturedFrames[i].dataUrl);
 
-      if (!cropRect) {
+      if (snipRect) {
+        const sx = snipRect.left * scale;
+        const sy = snipRect.top * scale;
+        const sw = snipRect.width * scale;
+        const sh = snipRect.height * scale;
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+      } else if (!cropRect) {
         if (i < capturedFrames.length - 1) {
           ctx.drawImage(img, 0, drawY);
           drawY += img.height;

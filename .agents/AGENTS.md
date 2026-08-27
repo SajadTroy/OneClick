@@ -66,7 +66,11 @@ OneClick_Webpage_Screenshot/
 ├── loading.js               # Script for loading.html. Polls captureProgress and drives the
 │                            # progress bar fill width and percentage text display.
 ├── manifest.json            # Manifest V3 configuration. Declares name, permissions, icons,
-│                            # service worker, and action.
+│                            # service worker, default popup, and action.
+├── popup.html               # The new default popup opened when clicking the extension icon.
+│                            # Shows mode chooser (Visible Area, Snip & Capture, Full Page).
+├── popup.js                 # Script for popup.html. Sends mode selection to background.js.
+├── snip.js                  # Injected for "Snip & Capture". Draws selection overlay on page.
 ├── result.css               # Styles for result.html. Inter font-face declarations, CSS custom
 │                            # properties for light/dark theming, toolbar layout, workspace area,
 │                            # zoom controls, toast notifications, and responsive breakpoints.

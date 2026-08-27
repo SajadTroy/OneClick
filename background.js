@@ -9,7 +9,7 @@ function isRestrictedUrl(url) {
 function updateActionState(tabId, url) {
   chrome.action.setPopup({
     tabId: tabId,
-    popup: isRestrictedUrl(url) ? 'error.html' : ''
+    popup: isRestrictedUrl(url) ? 'error.html' : 'popup.html'
   });
 }
 
@@ -47,36 +47,96 @@ chrome.tabs.onActivated.addListener(({ tabId }) => {
   });
 });
 
-chrome.action.onClicked.addListener(async (tab) => {
-  if (isRestrictedUrl(tab.url)) {
-    chrome.action.setPopup({ tabId: tab.id, popup: 'error.html' });
-    chrome.action.openPopup().catch(() => {});
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'start_capture') {
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      const tab = tabs[0];
+      if (!tab) return;
+      
+      if (isRestrictedUrl(tab.url)) {
+        return; // Should be handled by error.html, but just in case
+      }
+
+      try {
+        const sessionId = Date.now().toString();
+
+        await chrome.storage.local.set({
+          activeSessionId: sessionId,
+          captureProgress: 0,
+          captureComplete: false
+        });
+
+        chrome.action.setPopup({ tabId: tab.id, popup: 'loading.html' });
+        // Can't open popup programmatically from background without user gesture in V3 easily,
+        // but popup was just closed by window.close() in popup.js, so we might not be able to 
+        // force open loading.html. However, the user might see it if they click again.
+        // Actually, we can just let content.js run.
+
+        if (message.mode === 'fullpage') {
+          await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['content.js']
+          });
+        } else if (message.mode === 'snip') {
+          await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['snip.js']
+          });
+        } else if (message.mode === 'visible') {
+          chrome.tabs.captureVisibleTab(null, { format: 'png' }, async (dataUrl) => {
+            await chrome.storage.local.set({
+              [`capturedFrames_${sessionId}`]: {
+                title: tab.title,
+                frames: [{ dataUrl: dataUrl }],
+                dimensions: {
+                  width: tab.width,
+                  height: tab.height,
+                  windowWidth: tab.width,
+                  windowHeight: tab.height
+                }
+              },
+              captureComplete: true
+            });
+            chrome.tabs.create({ url: chrome.runtime.getURL(`result.html?session=${sessionId}`) });
+            chrome.action.setPopup({ tabId: tab.id, popup: 'popup.html' });
+          });
+        }
+      } catch (err) {
+        chrome.action.setPopup({ tabId: tab.id, popup: 'error.html' });
+      }
+    });
     return;
   }
 
-  try {
-    const sessionId = Date.now().toString();
-
-    await chrome.storage.local.set({
-      activeSessionId: sessionId,
-      captureProgress: 0,
-      captureComplete: false
+  if (message.action === 'capture_snip') {
+    chrome.storage.local.get('activeSessionId', ({ activeSessionId }) => {
+      chrome.tabs.captureVisibleTab(null, { format: 'png' }, async (dataUrl) => {
+        await chrome.storage.local.set({
+          [`capturedFrames_${activeSessionId}`]: {
+            title: message.title,
+            frames: [{ dataUrl: dataUrl }],
+            dimensions: {
+              width: message.rect.width,
+              height: message.rect.height,
+              windowWidth: message.windowWidth,
+              windowHeight: message.windowHeight,
+              snipRect: message.rect
+            }
+          },
+          captureComplete: true
+        });
+        chrome.tabs.create({ url: chrome.runtime.getURL(`result.html?session=${activeSessionId}`) });
+        
+        chrome.tabs.get(sender.tab.id, (tab) => {
+          if (tab) {
+            chrome.action.setPopup({ tabId: tab.id, popup: 'popup.html' });
+          }
+        });
+      });
     });
-
-    chrome.action.setPopup({ tabId: tab.id, popup: 'loading.html' });
-    chrome.action.openPopup().catch(() => {});
-
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ['content.js']
-    });
-  } catch (err) {
-    chrome.action.setPopup({ tabId: tab.id, popup: 'error.html' });
-    chrome.action.openPopup().catch(() => {});
+    return;
   }
-});
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'capture_visible_tab') {
     chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
       if (chrome.runtime.lastError) {
@@ -98,15 +158,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       await chrome.storage.local.set({ captureComplete: true });
 
       setTimeout(() => {
-        chrome.storage.local.get('activeTab', () => {
-          chrome.tabs.create({ url: chrome.runtime.getURL(`result.html?session=${activeSessionId}`) });
-        });
+        chrome.tabs.create({ url: chrome.runtime.getURL(`result.html?session=${activeSessionId}`) });
       }, 400);
 
       chrome.tabs.get(sender.tab.id, (tab) => {
         if (tab) {
-          chrome.action.setPopup({ tabId: tab.id, popup: '' });
-          updateActionState(tab.id, tab.url);
+          chrome.action.setPopup({ tabId: tab.id, popup: 'popup.html' });
         }
       });
     });

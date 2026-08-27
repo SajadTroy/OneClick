@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    @font-face { font-family: 'Inter'; font-weight: 400; font-style: normal; font-display: swap; src: url('fonts/Inter-Regular.woff2') format('woff2'); }
+    @font-face { font-family: 'Inter'; font-weight: 500; font-style: normal; font-display: swap; src: url('fonts/Inter-Medium.woff2') format('woff2'); }
+    @font-face { font-family: 'Inter'; font-weight: 600; font-style: normal; font-display: swap; src: url('fonts/Inter-SemiBold.woff2') format('woff2'); }
+    @font-face { font-family: 'Inter'; font-weight: 700; font-style: normal; font-display: swap; src: url('fonts/Inter-Bold.woff2') format('woff2'); }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 280px;
+      overflow: hidden;
+      background: #f0f4ff;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .popup-root { width: 280px; background: #f0f4ff; position: relative; overflow: hidden; }
+
+    .clouds { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .cloud { position: absolute; background: #bfdbfe; border-radius: 50%; opacity: 0.5; animation: moveClouds linear infinite; }
+    .cloud::before, .cloud::after { content: ""; position: absolute; background: #bfdbfe; border-radius: 50%; }
+    .cloud::before { width: 60%; height: 60%; top: -30%; left: 10%; }
+    .cloud::after { width: 40%; height: 40%; top: -20%; left: 50%; }
+    .cloud1 { width: 70px; height: 35px; top: 8%; left: 900px; animation-duration: 2s; }
+    .cloud2 { width: 100px; height: 50px; top: 35%; left: 1200px; animation-duration: 3s; }
+    .cloud3 { width: 55px; height: 30px; top: 15%; left: 1600px; animation-duration: 4s; }
+    .cloud4 { width: 80px; height: 40px; top: 60%; left: 800px; animation-duration: 2.8s; }
+    .cloud5 { width: 110px; height: 38px; top: 75%; left: 1400px; animation-duration: 2.2s; }
+    @keyframes moveClouds { 0% { transform: translateX(0); } 100% { transform: translateX(-1800px); opacity: 0; } }
+
+    .longfazers { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+    .longfazers span { position: absolute; height: 1px; width: 15%; background: rgba(59, 130, 246, 0.15); }
+    .longfazers span:nth-child(1) { top: 20%; animation: lf 0.6s linear infinite; animation-delay: -5s; }
+    .longfazers span:nth-child(2) { top: 40%; animation: lf2 0.8s linear infinite; animation-delay: -1s; }
+    .longfazers span:nth-child(3) { top: 62%; animation: lf3 0.6s linear infinite; }
+    .longfazers span:nth-child(4) { top: 80%; animation: lf4 0.5s linear infinite; animation-delay: -3s; }
+    @keyframes lf { 0% { left: 200%; } 100% { left: -200%; opacity: 0; } }
+    @keyframes lf2 { 0% { left: 200%; } 100% { left: -200%; opacity: 0; } }
+    @keyframes lf3 { 0% { left: 200%; } 100% { left: -100%; opacity: 0; } }
+    @keyframes lf4 { 0% { left: 200%; } 100% { left: -100%; opacity: 0; } }
+
+    .brand {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; gap: 8px;
+      padding: 14px 16px 10px;
+    }
+    .brand-icon { width: 24px; height: 24px; flex-shrink: 0; }
+    .brand-icon img { width: 100%; height: 100%; object-fit: contain; }
+    .brand-name { font-size: 12px; font-weight: 700; color: #111; letter-spacing: -0.01em; min-width: 0; flex: 1; }
+    
+    .rate-button {
+      margin-left: auto;
+      height: 26px;
+      padding: 0 8px;
+      border: 1px solid rgba(59, 130, 246, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.58);
+      color: #3b82f6;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+      flex-shrink: 0;
+    }
+    .rate-button:hover { background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.44); }
+    .rate-button:active { transform: scale(0.97); }
+    .rate-button svg { width: 12px; height: 12px; fill: currentColor; stroke: currentColor; stroke-width: 1.8; }
+
+    .chooser { position: relative; z-index: 2; padding: 0 12px 12px; display: flex; flex-direction: column; gap: 6px; }
+    .mode-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(59, 130, 246, 0.15);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+      font-family: inherit;
+      width: 100%;
+      text-align: left;
+    }
+    .mode-row:hover {
+      background: rgba(59, 130, 246, 0.06);
+      border-color: rgba(59, 130, 246, 0.4);
+      transform: translateY(-1px);
+    }
+    .mode-row:active { transform: scale(0.98); }
+    .mode-icon {
+      width: 32px; height: 32px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #3b82f6;
+      background: rgba(59, 130, 246, 0.08);
+      border-radius: 8px;
+    }
+    .mode-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .mode-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+    .mode-title { font-size: 12px; font-weight: 600; color: #111; letter-spacing: -0.01em; }
+    .mode-sub { font-size: 10px; font-weight: 500; color: #666; }
+
+  </style>
+</head>
+<body>
+  <div class="popup-root">
+    <div class="clouds">
+      <div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div><div class="cloud cloud4"></div><div class="cloud cloud5"></div>
+    </div>
+    <div class="longfazers"><span></span><span></span><span></span><span></span></div>
+
+    <div class="brand">
+      <div class="brand-icon"><img src="icons/icon48.png" alt="OneClick"></div>
+      <span class="brand-name">OneClick Screenshot</span>
+      <button class="rate-button" id="rate-us" type="button" title="Rate us">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.55 5.17 5.7.83-4.13 4.02.97 5.68L12 16.52 6.91 19.2l.97-5.68L3.75 9.5l5.7-.83L12 3.5z"/></svg>
+        <span>Rate us</span>
+      </button>
+    </div>
+
+    <div class="chooser" id="state-chooser">
+      <button class="mode-row" data-mode="visible" type="button">
+        <span class="mode-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </span>
+        <span class="mode-text">
+          <span class="mode-title">Visible Area</span>
+          <span class="mode-sub">Capture what's on screen</span>
+        </span>
+      </button>
+
+      <button class="mode-row" data-mode="snip" type="button">
+        <span class="mode-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path stroke-dasharray="3 3" d="M4 4h16v16H4z"/><circle cx="4" cy="4" r="1.5" fill="currentColor" stroke="none"/><circle cx="20" cy="20" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </span>
+        <span class="mode-text">
+          <span class="mode-title">Snip & Capture</span>
+          <span class="mode-sub">Drag to select region</span>
+        </span>
+      </button>
+
+      <button class="mode-row" data-mode="fullpage" type="button">
+        <span class="mode-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M9 13h6M9 17h6"/></svg>
+        </span>
+        <span class="mode-text">
+          <span class="mode-title">Full Page</span>
+          <span class="mode-sub">Scroll & capture entire page</span>
+        </span>
+      </button>
+    </div>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
