@@ -1,4 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const tab = tabs[0];
+    if (tab && tab.url) {
+      const isRestricted = tab.url.startsWith('chrome://') ||
+        tab.url.startsWith('chrome-extension://') ||
+        tab.url.startsWith('https://chrome.google.com/webstore') ||
+        tab.url.startsWith('https://chromewebstore.google.com/');
+        
+      if (isRestricted) {
+        window.location.href = 'error.html';
+        return;
+      }
+    }
+  });
+
   const STORE_EXTENSION_ID = 'your_extension_id_here'; // Replace with actual ID later if needed
 
   function getReviewUrl() {
