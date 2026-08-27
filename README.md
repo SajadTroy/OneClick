@@ -1,8 +1,6 @@
-<div align="center">
-  <img src="icons/icon128.png" alt="OneClick Logo" width="128" />
-  <h1>OneClick - Full Page Webpage Screenshot</h1>
-  <p>Capture entire web pages perfectly from top to bottom with a single click, and export them seamlessly as PNGs or paginated PDFs.</p>
-</div>
+# OneClick - Full Page Webpage Screenshot
+
+Capture entire web pages perfectly from top to bottom with a single click, and export them seamlessly as PNGs or paginated PDFs.
 
 ---
 
@@ -38,14 +36,10 @@
 
 If this extension saves you time and effort, consider supporting its continued development!
 
-<div align="center">
-  <a href="https://github.com/sponsors/SajadTroy">
-    <img src="https://img.shields.io/badge/Sponsor-SajadTroy-ea4aaa?style=for-the-badge&logo=githubsponsors" alt="Sponsor SajadTroy" />
-  </a>
-</div>
+<a href="https://github.com/sponsors/SajadTroy">
+  <img src="https://img.shields.io/badge/Sponsor-SajadTroy-ea4aaa?style=for-the-badge&logo=githubsponsors" alt="Sponsor SajadTroy" />
+</a>
 
 ---
 
-<div align="center">
-  Built by SajadTroy
-</div>
+Built by SajadTroy

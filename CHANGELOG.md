@@ -7,8 +7,11 @@ All notable changes to the OneClick Webpage Screenshot extension will be documen
 - **Popup Menu:** Replaced the single-click full-page capture with a rich popup menu.
 - **New Capture Modes:** Introduced "Visible Area" and "Snip & Capture" (region selection) alongside the existing "Full Page" capture.
 - **Snip Overlay:** Added a custom crosshair overlay for precise region selection on any webpage.
+- **Review Button:** Added a direct link to the Chrome Web Store on the result page to leave a review.
 ### Changed
-- **Brand Redesign:** Updated the extension's primary color theme to a sleek blue/indigo.
+- **Brand Redesign:** Updated the extension's primary color theme from blue to a vibrant hot pink (`#F55594`).
+- **UI Synchronization:** Streamlined the UI theme across popups and result pages for a unified visual aesthetic.
+- **Zoom Optimization:** Improved the zoom functionality on the result page to permanently scale the base image size down by 14%, ensuring it fits comfortably without stretching, capped at 100%, and removed the buggy auto-fit behavior.
 - **UI Icons:** Upgraded all buttons and UI elements with modern Myna UI icons.
 - **Popup State Handling:** Improved reliability on restricted pages (e.g., `chrome://`) by immediately checking the active tab when the popup opens.
 - **Animations:** Removed hover wobbles from toolbar buttons for a cleaner interaction.
