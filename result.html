@@ -18,16 +18,11 @@
 
             <div class="toolbar-right">
                 <div class="zoom-group">
-                    <button class="btn-icon" id="zoom-out">
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
-                    </button>
-                    <button class="btn-icon zoom-pct" id="zoom-fit">
+                    <button class="btn-icon zoom-pct" id="zoom-fit" title="Fit to screen">
                         <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
                         <span id="zoom-value">100%</span>
                     </button>
-                    <button class="btn-icon" id="zoom-in">
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 12h-6m0 0H6m6 0V6m0 6v6"/></svg>
-                    </button>
+                    <input type="range" id="zoom-slider" min="10" max="500" value="100" class="zoom-slider">
                 </div>
 
                 <div class="separator"></div>

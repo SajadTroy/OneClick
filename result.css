@@ -221,9 +221,8 @@ body {
 }
 
 .zoom-group .btn-icon {
-  height: 34px;
-  width: 34px;
-  padding: 0;
+  height: 32px;
+  padding: 0 10px;
   border-radius: 6px;
 }
 
@@ -232,13 +231,13 @@ body {
 }
 
 .zoom-pct {
-  height: 34px;
-  padding: 0 12px;
+  height: 32px;
+  padding: 0 10px;
   border-radius: 6px;
   font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
-  font-size: 14px;
+  font-size: 13px;
   font-variant-numeric: tabular-nums;
-  gap: 4px;
+  gap: 6px;
 }
 
 .zoom-pct svg {
@@ -248,6 +247,31 @@ body {
 
 .zoom-pct.is-fit {
   color: var(--primary);
+}
+
+.zoom-slider {
+  -webkit-appearance: none;
+  width: 100px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+  margin: 0 8px;
+  cursor: pointer;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--primary);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.zoom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
 }
 
 .bmc-link {

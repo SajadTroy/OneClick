@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const applyZoom = () => {
     const pct = Math.round(currentZoom * 100);
     zoomValueEl.textContent = `${pct}%`;
+    const zoomSlider = document.getElementById('zoom-slider');
+    if (zoomSlider) zoomSlider.value = pct;
 
     const fitBtn = document.getElementById('zoom-fit');
     if (isFitMode) {
@@ -55,12 +57,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     applyZoom();
   };
 
-  document.getElementById('zoom-in').addEventListener('click', () => {
-    setZoom(currentZoom + 0.25);
-  });
-
-  document.getElementById('zoom-out').addEventListener('click', () => {
-    setZoom(currentZoom - 0.25);
+  const zoomSlider = document.getElementById('zoom-slider');
+  
+  zoomSlider.addEventListener('input', (e) => {
+    setZoom(e.target.value / 100);
   });
 
   document.getElementById('zoom-fit').addEventListener('click', () => {
