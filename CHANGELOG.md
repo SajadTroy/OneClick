@@ -2,6 +2,11 @@
 
 All notable changes to the OneClick Webpage Screenshot extension will be documented in this file.
 
+## [1.1.3] - Support and UI Update
+### Changed
+- **Support Button:** Replaced the GitHub Sponsors button on the result page with the official "Buy Me a Coffee" interactive button graphic for better visibility and a more native look.
+- **Support Configuration:** Added "Buy Me a Coffee" to the project's funding configuration to display natively on the repository sponsor page.
+
 ## [1.1.2] - Policy Compliance & Bug Fixes
 ### Fixed
 - **Remote Hosted Code:** Removed external CDN dependencies (cdnjs) and bundled `pdfobject.min.js` locally to comply with Chrome Web Store Manifest V3 security policies.
