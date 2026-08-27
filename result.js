@@ -9,8 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const toastEl = document.getElementById('toast');
 
   let currentZoom = 1;
-  let fitZoom = 1;
-  let isFitMode = true;
+  let devicePixelRatio = 1;
 
   const showToast = (msg) => {
     toastEl.textContent = msg;
@@ -18,13 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setTimeout(() => toastEl.classList.remove('show'), 2000);
   };
 
-  const calcFitZoom = () => {
-    if (!canvas.width || !canvas.height) return 1;
-    const pad = 48;
-    const availW = workspace.clientWidth - pad;
-    const availH = workspace.clientHeight - pad;
-    return Math.min(1, availW / canvas.width, availH / canvas.height);
-  };
+
 
   const applyZoom = () => {
     const pct = Math.round(currentZoom * 100);
@@ -32,27 +25,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const zoomSlider = document.getElementById('zoom-slider');
     if (zoomSlider) zoomSlider.value = pct;
 
-    const fitBtn = document.getElementById('zoom-fit');
-    if (isFitMode) {
-      fitBtn.classList.add('is-fit');
-    } else {
-      fitBtn.classList.remove('is-fit');
-    }
-
-    canvasWrap.style.width = `${Math.round(canvas.width * currentZoom)}px`;
-    canvasWrap.style.height = `${Math.round(canvas.height * currentZoom)}px`;
+    const logicalW = (canvas.width / devicePixelRatio) * 0.86;
+    const logicalH = (canvas.height / devicePixelRatio) * 0.86;
+    canvasWrap.style.width = `${Math.round(logicalW * currentZoom)}px`;
+    canvasWrap.style.height = `${Math.round(logicalH * currentZoom)}px`;
   };
 
   const setZoom = (z) => {
-    currentZoom = Math.max(0.1, Math.min(5, z));
-    isFitMode = false;
-    applyZoom();
-  };
-
-  const doFitZoom = () => {
-    fitZoom = calcFitZoom();
-    currentZoom = fitZoom;
-    isFitMode = true;
+    currentZoom = Math.max(0.1, Math.min(1, z));
     applyZoom();
   };
 
@@ -62,19 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setZoom(e.target.value / 100);
   });
 
-  document.getElementById('zoom-fit').addEventListener('click', () => {
-    if (isFitMode) {
-      setZoom(1);
-    } else {
-      doFitZoom();
-    }
-  });
 
-  window.addEventListener('resize', () => {
-    if (isFitMode) {
-      doFitZoom();
-    }
-  });
 
   document.getElementById('copy-btn').addEventListener('click', async () => {
     try {
@@ -113,6 +81,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const firstImg = await loadImage(capturedFrames[0].dataUrl);
     const windowWidth = captureDimensions.windowWidth || captureDimensions.width;
     const scale = firstImg.width / windowWidth;
+    devicePixelRatio = scale;
     const cropRect = captureDimensions.cropRect;
     const snipRect = captureDimensions.snipRect;
 
@@ -185,7 +154,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadingEl.style.display = 'none';
     canvas.style.display = 'block';
 
-    doFitZoom();
+    applyZoom();
 
     document.getElementById('download-png').addEventListener('click', () => {
       const dataUrl = canvas.toDataURL('image/png');

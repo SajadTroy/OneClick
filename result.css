@@ -246,22 +246,15 @@ body {
 }
 
 .zoom-pct {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 32px;
   padding: 0 10px;
-  border-radius: 6px;
   font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
   font-size: 13px;
   font-variant-numeric: tabular-nums;
-  gap: 6px;
-}
-
-.zoom-pct svg {
-  width: 14px;
-  height: 14px;
-}
-
-.zoom-pct.is-fit {
-  color: var(--primary);
+  color: var(--muted-fg);
 }
 
 .zoom-slider {
