@@ -32,7 +32,12 @@
 ```
 OneClick_Webpage_Screenshot/
 ├── .github/
-│   └── FUNDING.yml          # GitHub Sponsors configuration — links to SajadTroy's sponsor page.
+│   └── FUNDING.yml          # GitHub Sponsors + Buy Me A Coffee funding configuration.
+├── fonts/
+│   ├── Inter-Regular.woff2  # Inter font weight 400, bundled locally for extension CSP.
+│   ├── Inter-Medium.woff2   # Inter font weight 500.
+│   ├── Inter-SemiBold.woff2 # Inter font weight 600.
+│   └── Inter-Bold.woff2     # Inter font weight 700.
 ├── icons/
 │   ├── icon.svg             # Source SVG logo. Blue rounded rectangle with browser window + camera lens.
 │   ├── icon16.png           # 16×16 extension icon used in the browser toolbar.
@@ -42,7 +47,10 @@ OneClick_Webpage_Screenshot/
 ├── lib/
 │   ├── jspdf.umd.min.js     # Local copy of jsPDF v2.5.1 used for PDF export in result.js.
 │   └── pdfobject.min.js     # Local copy of pdfobject used by jsPDF for PDF preview.
-├── src/                     # Promotional assets for the Chrome Web Store.
+├── src/                     # Promotional assets and branding resources (not shipped in zip).
+│   ├── bmcbrand/            # Buy Me A Coffee official branding assets (SVGs, PNGs).
+│   ├── banner_one.png       # Promotional banner image.
+│   ├── banner_two.png       # Promotional banner image.
 │   ├── promo2.html          # HTML source code for the features promotional screenshot.
 │   ├── promo_screenshot.jpg # Generated 1280x800 main promotional screenshot.
 │   └── promo_screenshot_features.jpg # Generated 1280x800 features promotional screenshot.
@@ -51,17 +59,23 @@ OneClick_Webpage_Screenshot/
 ├── content.js               # Injected into the active tab. Scrolls the page, captures frames via message
 │                            # passing to background.js, writes progress to chrome.storage.local, and saves
 │                            # frames when complete. No DOM injection.
-├── error.html               # Native popup shown on restricted pages (chrome://, chrome-extension://, Web Store).
-├── loading.html             # Native popup shown during capture. Polls chrome.storage for progress.
-├── loading.js               # Script for loading.html. Polls captureProgress and captureComplete from storage.
+├── error.html               # Native popup shown on restricted pages. Animated cloud background,
+│                            # brand header, pop-in error icon, and styled error message.
+├── loading.html             # Native popup shown during capture. Animated cloud background,
+│                            # streaking lines, brand header, candy-stripe progress bar.
+├── loading.js               # Script for loading.html. Polls captureProgress and drives the
+│                            # progress bar fill width and percentage text display.
 ├── manifest.json            # Manifest V3 configuration. Declares name, permissions, icons,
 │                            # service worker, and action.
-├── result.css               # Styles for result.html. Dark card design with download buttons.
-├── result.html              # The result page opened after capture completes. Shows a canvas preview
-│                            # of the stitched screenshot and PNG/PDF download buttons.
-├── result.js                # Retrieves captured frames from chrome.storage.local, stitches them onto
-│                            # a <canvas> using cumulative height stacking (no yPos math), and handles
-│                            # PNG and PDF download logic including multi-page PDF pagination.
+├── result.css               # Styles for result.html. Inter font-face declarations, CSS custom
+│                            # properties for light/dark theming, toolbar layout, workspace area,
+│                            # zoom controls, toast notifications, and responsive breakpoints.
+├── result.html              # Toolbar-based result page opened after capture. Top toolbar with
+│                            # brand, dimensions badge, zoom controls, copy, download PNG/PDF,
+│                            # BMC button, dark mode toggle. Workspace area with canvas preview.
+├── result.js                # Retrieves captured frames, stitches onto canvas, handles zoom
+│                            # (in/out/fit), copy to clipboard with toast, dark mode toggle with
+│                            # persistence, dimensions display, and PNG/PDF download logic.
 ├── CHANGELOG.md             # Version history documenting all notable changes to the extension.
 ├── LICENSE                  # MIT License. Copyright SajadTroy 2026.
 ├── OneClick_v1.1.3.zip      # The finalized packed extension ready for Web Store upload.
@@ -93,10 +107,12 @@ Responsibilities:
 ### `loading.html` + `loading.js`
 Native extension popup shown as the action popup during an active capture session.
 `background.js` sets the popup to `loading.html` when capture starts and resets it to `''` when done.
-`loading.js` polls `chrome.storage.local` every 250ms for `captureProgress` (0–100) and `captureComplete` (boolean), closing the popup automatically when the capture finishes.
+Features animated floating clouds, streaking lines, brand header with icon, pulse-animated capture icon, and a candy-stripe progress bar.
+`loading.js` polls `chrome.storage.local` every 250ms for `captureProgress` (0–100) and `captureComplete` (boolean), drives the progress bar fill width and percentage text, and auto-closes when capture finishes.
 
 ### `error.html`
-Native extension popup shown when the user clicks the icon on restricted pages (`chrome://`, `chrome-extension://`, Web Store). Uses the Myna UI `danger-triangle` icon.
+Native extension popup shown when the user clicks the icon on restricted pages (`chrome://`, `chrome-extension://`, Web Store).
+Features animated cloud background, brand header, and a pop-in animated error icon matching the loading popup design language.
 
 ### `content.js`
 Injected into the active tab by the service worker. Runs as an IIFE and guards against double-injection with `window.isCapturingScreenshot`.
@@ -109,13 +125,20 @@ Responsibilities:
 - Sends `capture_complete` to trigger the result page.
 
 ### `result.html` + `result.css`
-The output page. Loaded in a new Chrome tab after capture.
-Contains a canvas preview and two download buttons. Loads `lib/jspdf.umd.min.js` and `result.js`.
+Toolbar-based result page opened in a new Chrome tab after capture.
+Top toolbar (52px): brand icon + name, dimensions badge (`W × H`), zoom controls group (in/out/fit with percentage), copy to clipboard button, download PNG/PDF buttons, BMC button, and dark mode toggle.
+Workspace area below with scrollable canvas preview.
+`result.css` defines Inter font-face declarations, CSS custom properties for light/dark theming (`.dark` class on `<html>`), toolbar, workspace, zoom group, badge, separator, toast notification, and responsive breakpoints.
 
 ### `result.js`
 Stitches captured frames onto a single `<canvas>` using cumulative `drawY` tracking (not scroll-position math) to avoid sub-pixel gaps.
 The last frame is clipped using `drawImage` source-rect overload to fill exactly the remaining canvas height.
-For PDF export, the canvas is first scaled down to a max width of `1240px` on an offscreen canvas to reduce file size and improve PDF viewer scrolling performance. PDF pages are paginated to respect jsPDF's 14,400 pt max page height limit.
+Additional interactive features:
+- Zoom controls: zoom in (+25%), zoom out (-25%), fit-to-window toggle with percentage display.
+- Copy to clipboard: uses `navigator.clipboard.write()` with toast feedback (no extra permission needed).
+- Dark mode toggle: toggles `.dark` class on `<html>`, persists preference to `chrome.storage.local`.
+- Dimensions display: shows stitched image dimensions in the toolbar badge.
+For PDF export, PDF pages are paginated to respect jsPDF's 14,400 pt max page height limit.
 
 ### `lib/jspdf.umd.min.js`
 Must be kept local (not loaded from a CDN) to comply with Chrome Extension Content Security Policy.

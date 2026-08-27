@@ -1,9 +1,111 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const canvas = document.getElementById('result-canvas');
   const ctx = canvas.getContext('2d');
-  const loading = document.getElementById('loading');
-  const btnPng = document.getElementById('download-png');
-  const btnPdf = document.getElementById('download-pdf');
+  const loadingEl = document.getElementById('loading');
+  const canvasWrap = document.getElementById('canvas-wrap');
+  const workspace = document.getElementById('workspace');
+  const dimensionsEl = document.getElementById('dimensions');
+  const zoomValueEl = document.getElementById('zoom-value');
+  const toastEl = document.getElementById('toast');
+
+  let currentZoom = 1;
+  let fitZoom = 1;
+  let isFitMode = true;
+
+  const initTheme = async () => {
+    const stored = await chrome.storage.local.get('themePreference');
+    const pref = stored.themePreference;
+
+    if (pref === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.getElementById('icon-sun').style.display = 'none';
+      document.getElementById('icon-moon').style.display = '';
+    }
+  };
+
+  await initTheme();
+
+  document.getElementById('theme-toggle').addEventListener('click', async () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    document.getElementById('icon-sun').style.display = isDark ? 'none' : '';
+    document.getElementById('icon-moon').style.display = isDark ? '' : 'none';
+    await chrome.storage.local.set({ themePreference: isDark ? 'dark' : 'light' });
+  });
+
+  const showToast = (msg) => {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    setTimeout(() => toastEl.classList.remove('show'), 2000);
+  };
+
+  const calcFitZoom = () => {
+    if (!canvas.width || !canvas.height) return 1;
+    const pad = 48;
+    const availW = workspace.clientWidth - pad;
+    const availH = workspace.clientHeight - pad;
+    return Math.min(1, availW / canvas.width, availH / canvas.height);
+  };
+
+  const applyZoom = () => {
+    const pct = Math.round(currentZoom * 100);
+    zoomValueEl.textContent = `${pct}%`;
+
+    const fitBtn = document.getElementById('zoom-fit');
+    if (isFitMode) {
+      fitBtn.classList.add('is-fit');
+    } else {
+      fitBtn.classList.remove('is-fit');
+    }
+
+    canvasWrap.style.transform = `scale(${currentZoom})`;
+    canvasWrap.style.width = `${canvas.width}px`;
+    canvasWrap.style.height = `${canvas.height}px`;
+  };
+
+  const setZoom = (z) => {
+    currentZoom = Math.max(0.1, Math.min(5, z));
+    isFitMode = false;
+    applyZoom();
+  };
+
+  const doFitZoom = () => {
+    fitZoom = calcFitZoom();
+    currentZoom = fitZoom;
+    isFitMode = true;
+    applyZoom();
+  };
+
+  document.getElementById('zoom-in').addEventListener('click', () => {
+    setZoom(currentZoom + 0.25);
+  });
+
+  document.getElementById('zoom-out').addEventListener('click', () => {
+    setZoom(currentZoom - 0.25);
+  });
+
+  document.getElementById('zoom-fit').addEventListener('click', () => {
+    if (isFitMode) {
+      setZoom(1);
+    } else {
+      doFitZoom();
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (isFitMode) {
+      doFitZoom();
+    }
+  });
+
+  document.getElementById('copy-btn').addEventListener('click', async () => {
+    try {
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+      showToast('Copied to clipboard');
+    } catch (err) {
+      showToast('Failed to copy');
+    }
+  });
 
   const params = new URLSearchParams(window.location.search);
   const sessionId = params.get('session');
@@ -13,9 +115,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const sessionData = stored[sessionKey];
 
   if (!sessionData || !sessionData.frames || sessionData.frames.length === 0) {
-    loading.textContent = 'Error: No screenshot data found.';
-    loading.style.color = 'red';
-    loading.classList.remove('loading');
+    loadingEl.querySelector('.loading-text').textContent = 'Error: No screenshot data found.';
+    loadingEl.querySelector('.loading-spinner').style.display = 'none';
     return;
   }
 
@@ -37,8 +138,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const headerHeight = cropRect ? cropRect.top : 0;
     const footerHeight = cropRect ? captureDimensions.windowHeight - cropRect.bottom : 0;
-    
-    const totalHeight = cropRect 
+
+    const totalHeight = cropRect
       ? (headerHeight + captureDimensions.height + footerHeight) * scale
       : captureDimensions.height * scale;
 
@@ -86,10 +187,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
 
-    loading.style.display = 'none';
+    dimensionsEl.textContent = `${canvas.width} × ${canvas.height}`;
+
+    loadingEl.style.display = 'none';
     canvas.style.display = 'block';
 
-    btnPng.addEventListener('click', () => {
+    doFitZoom();
+
+    document.getElementById('download-png').addEventListener('click', () => {
       const dataUrl = canvas.toDataURL('image/png');
       chrome.downloads.download({
         url: dataUrl,
@@ -98,7 +203,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     });
 
-    btnPdf.addEventListener('click', () => {
+    document.getElementById('download-pdf').addEventListener('click', () => {
       const { jsPDF } = window.jspdf;
 
       const imgData = canvas.toDataURL('image/jpeg', 0.98);
@@ -147,7 +252,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   } catch (err) {
     console.error('Error rendering screenshot:', err);
-    loading.textContent = 'Error rendering screenshot.';
-    loading.style.color = 'red';
+    loadingEl.querySelector('.loading-text').textContent = 'Error rendering screenshot.';
+    loadingEl.querySelector('.loading-spinner').style.display = 'none';
   }
 });

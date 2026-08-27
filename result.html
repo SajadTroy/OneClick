@@ -8,30 +8,73 @@
     <script src="lib/jspdf.umd.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>Screenshot Ready!</h1>
-            <p>Your full-page screenshot has been captured successfully.</p>
-            <div class="actions">
-                <button id="download-png" class="btn btn-primary">
-                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.004V17a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1M12 4.5v11m3.5-3.5L12 15.5 8.5 12"/></svg>
-                    Download PNG
+    <div class="app-layout">
+        <header class="toolbar">
+            <div class="toolbar-left">
+                <div class="brand-icon"><img src="icons/icon48.png" alt="OneClick"></div>
+                <span class="brand-name">OneClick Screenshot</span>
+                <span class="badge" id="dimensions"></span>
+            </div>
+
+            <div class="toolbar-right">
+                <div class="zoom-group">
+                    <button class="btn-icon" id="zoom-out" title="Zoom out">
+                        <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+                    </button>
+                    <button class="btn-icon zoom-pct" id="zoom-fit" title="Fit to window">
+                        <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        <span id="zoom-value">100%</span>
+                    </button>
+                    <button class="btn-icon" id="zoom-in" title="Zoom in">
+                        <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    </button>
+                </div>
+
+                <div class="separator"></div>
+
+                <button class="btn-icon" id="copy-btn" title="Copy to clipboard">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span>Copy</span>
                 </button>
-                <button id="download-pdf" class="btn btn-secondary">
-                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.478 3H7.25A2.25 2.25 0 0 0 5 5.25v13.5A2.25 2.25 0 0 0 7.25 21h9a2.25 2.25 0 0 0 2.25-2.25V12M9.478 3c1.243 0 2.272 1.007 2.272 2.25V7.5A2.25 2.25 0 0 0 14 9.75h2.25A2.25 2.25 0 0 1 18.5 12M9.478 3c3.69 0 9.022 5.36 9.022 9M9 16.5h6m-6-3h4"/></svg>
-                    Download PDF
+
+                <div class="separator"></div>
+
+                <button class="btn-icon btn-primary" id="download-png" title="Download PNG">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.004V17a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1M12 4.5v11m3.5-3.5L12 15.5 8.5 12"/></svg>
+                    <span>PNG</span>
                 </button>
-                <a id="donate-btn" href="https://buymeacoffee.com/sajadtroy" target="_blank" class="bmc-btn-link">
-                    <img src="icons/bmc-button.svg" alt="Buy Me A Coffee" style="height: 44px; border-radius: 8px;">
+
+                <button class="btn-icon btn-secondary" id="download-pdf" title="Download PDF">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.478 3H7.25A2.25 2.25 0 0 0 5 5.25v13.5A2.25 2.25 0 0 0 7.25 21h9a2.25 2.25 0 0 0 2.25-2.25V12M9.478 3c1.243 0 2.272 1.007 2.272 2.25V7.5A2.25 2.25 0 0 0 14 9.75h2.25A2.25 2.25 0 0 1 18.5 12M9.478 3c3.69 0 9.022 5.36 9.022 9M9 16.5h6m-6-3h4"/></svg>
+                    <span>PDF</span>
+                </button>
+
+                <div class="separator"></div>
+
+                <a id="donate-btn" href="https://buymeacoffee.com/sajadtroy" target="_blank" class="bmc-link">
+                    <img src="icons/bmc-button.svg" alt="Buy Me A Coffee">
                 </a>
+
+                <button class="btn-icon" id="theme-toggle" title="Toggle dark mode">
+                    <svg id="icon-sun" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                    <svg id="icon-moon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                </button>
             </div>
         </header>
 
-        <div class="preview-container">
-            <div id="loading" class="loading">Stitching images...</div>
-            <canvas id="result-canvas"></canvas>
+        <div class="workspace" id="workspace">
+            <div class="loading-overlay" id="loading">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Stitching images...</div>
+            </div>
+            <div class="canvas-wrap" id="canvas-wrap">
+                <canvas id="result-canvas"></canvas>
+            </div>
         </div>
     </div>
+
+    <div class="toast" id="toast"></div>
+
     <script src="result.js"></script>
 </body>
 </html>

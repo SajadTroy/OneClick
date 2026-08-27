@@ -3,50 +3,101 @@
 <head>
   <meta charset="utf-8">
   <style>
-    :root {
-      --bg-color: #f8fafc;
-      --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
+    @font-face { font-family: 'Inter'; font-weight: 400; font-style: normal; font-display: swap; src: url('fonts/Inter-Regular.woff2') format('woff2'); }
+    @font-face { font-family: 'Inter'; font-weight: 600; font-style: normal; font-display: swap; src: url('fonts/Inter-SemiBold.woff2') format('woff2'); }
+    @font-face { font-family: 'Inter'; font-weight: 700; font-style: normal; font-display: swap; src: url('fonts/Inter-Bold.woff2') format('woff2'); }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 280px;
+      overflow: hidden;
+      background: #f0f4ff;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--card-bg);
-      color: var(--text-main);
-      margin: 0;
-      padding: 1.5rem;
-      width: 260px;
-      text-align: center;
+
+    .popup-root { width: 280px; background: #f0f4ff; position: relative; overflow: hidden; }
+
+    .clouds { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .cloud { position: absolute; background: #bfdbfe; border-radius: 50%; opacity: 0.5; animation: moveClouds linear infinite; }
+    .cloud::before, .cloud::after { content: ""; position: absolute; background: #bfdbfe; border-radius: 50%; }
+    .cloud::before { width: 60%; height: 60%; top: -30%; left: 10%; }
+    .cloud::after { width: 40%; height: 40%; top: -20%; left: 50%; }
+    .cloud1 { width: 70px; height: 35px; top: 8%; left: 900px; animation-duration: 2s; }
+    .cloud2 { width: 100px; height: 50px; top: 35%; left: 1200px; animation-duration: 3s; }
+    .cloud3 { width: 55px; height: 30px; top: 15%; left: 1600px; animation-duration: 4s; }
+    .cloud4 { width: 80px; height: 40px; top: 60%; left: 800px; animation-duration: 2.8s; }
+    .cloud5 { width: 110px; height: 38px; top: 75%; left: 1400px; animation-duration: 2.2s; }
+    @keyframes moveClouds { 0% { transform: translateX(0); } 100% { transform: translateX(-1800px); opacity: 0; } }
+
+    .longfazers { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+    .longfazers span { position: absolute; height: 1px; width: 15%; background: rgba(59, 130, 246, 0.15); }
+    .longfazers span:nth-child(1) { top: 20%; animation: lf 0.6s linear infinite; animation-delay: -5s; }
+    .longfazers span:nth-child(2) { top: 40%; animation: lf2 0.8s linear infinite; animation-delay: -1s; }
+    .longfazers span:nth-child(3) { top: 62%; animation: lf3 0.6s linear infinite; }
+    .longfazers span:nth-child(4) { top: 80%; animation: lf4 0.5s linear infinite; animation-delay: -3s; }
+    @keyframes lf { 0% { left: 200%; } 100% { left: -200%; opacity: 0; } }
+    @keyframes lf2 { 0% { left: 200%; } 100% { left: -200%; opacity: 0; } }
+    @keyframes lf3 { 0% { left: 200%; } 100% { left: -100%; opacity: 0; } }
+    @keyframes lf4 { 0% { left: 200%; } 100% { left: -100%; opacity: 0; } }
+
+    .brand {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; gap: 8px;
+      padding: 14px 16px 10px;
     }
-    .icon {
-      background: #fee2e2;
-      color: #ef4444;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0 auto 0.75rem;
+    .brand-icon { width: 24px; height: 24px; flex-shrink: 0; }
+    .brand-icon img { width: 100%; height: 100%; object-fit: contain; }
+    .brand-name { font-size: 12px; font-weight: 700; color: #111; letter-spacing: -0.01em; }
+
+    .error-area {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 10px;
+      padding: 20px 16px 28px;
     }
-    h1 {
-      font-size: 1.1rem;
-      margin: 0 0 0.5rem;
-      font-weight: 600;
+
+    .error-icon {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1.5px solid #ef4444;
+      display: flex; align-items: center; justify-content: center;
+      animation: pop-in 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    p {
-      color: var(--text-muted);
-      margin: 0;
-      font-size: 0.9rem;
-      line-height: 1.4;
+    .error-icon svg { width: 18px; height: 18px; stroke: #ef4444; }
+    @keyframes pop-in { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: scale(1); } }
+
+    .error-title { font-size: 13px; font-weight: 700; color: #111; }
+
+    .error-msg {
+      font-size: 11px; color: #64748b; font-weight: 500;
+      text-align: center; padding: 0 16px; line-height: 1.5;
     }
   </style>
 </head>
 <body>
-  <div class="icon">
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8.5V14m0 3.247v-.5m-6.02-5.985C8.608 5.587 9.92 3 12 3s3.393 2.587 6.02 7.762l.327.644c2.182 4.3 3.274 6.45 2.287 8.022C19.648 21 17.208 21 12.327 21h-.654c-4.88 0-7.321 0-8.307-1.572s.105-3.722 2.287-8.022z"/></svg>
+  <div class="popup-root">
+    <div class="clouds">
+      <div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div><div class="cloud cloud4"></div><div class="cloud cloud5"></div>
+    </div>
+    <div class="longfazers"><span></span><span></span><span></span><span></span></div>
+
+    <div class="brand">
+      <div class="brand-icon"><img src="icons/icon48.png" alt="OneClick"></div>
+      <span class="brand-name">OneClick Screenshot</span>
+    </div>
+
+    <div class="error-area">
+      <div class="error-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 9v4m0 4h.01"/>
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        </svg>
+      </div>
+      <div class="error-title">Cannot Capture</div>
+      <div class="error-msg">Chrome restricts screenshots on system pages and the Web Store.</div>
+    </div>
   </div>
-  <h1>Cannot Capture</h1>
-  <p>Chrome restricts screenshots on system pages and the Web Store.</p>
 </body>
 </html>
