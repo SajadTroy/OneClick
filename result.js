@@ -12,26 +12,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   let fitZoom = 1;
   let isFitMode = true;
 
-  const initTheme = async () => {
-    const stored = await chrome.storage.local.get('themePreference');
-    const pref = stored.themePreference;
-
-    if (pref === 'dark') {
-      document.documentElement.classList.add('dark');
-      document.getElementById('icon-sun').style.display = 'none';
-      document.getElementById('icon-moon').style.display = '';
-    }
-  };
-
-  await initTheme();
-
-  document.getElementById('theme-toggle').addEventListener('click', async () => {
-    const isDark = document.documentElement.classList.toggle('dark');
-    document.getElementById('icon-sun').style.display = isDark ? 'none' : '';
-    document.getElementById('icon-moon').style.display = isDark ? '' : 'none';
-    await chrome.storage.local.set({ themePreference: isDark ? 'dark' : 'light' });
-  });
-
   const showToast = (msg) => {
     toastEl.textContent = msg;
     toastEl.classList.add('show');

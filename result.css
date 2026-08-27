@@ -48,24 +48,6 @@
   --radius: 0.5rem;
   --toolbar-h: 52px;
 }
-
-.dark {
-  --shell: #0c1222;
-  --chrome: #1e293b;
-  --workspace: #0f172a;
-  --foreground: #f1f5f9;
-  --muted: #334155;
-  --muted-fg: #94a3b8;
-  --border: #334155;
-  --primary: #60a5fa;
-  --primary-hover: #3b82f6;
-  --primary-fg: #0f172a;
-  --secondary: #34d399;
-  --secondary-hover: #10b981;
-  --accent-tint: rgba(96, 165, 250, 0.1);
-  --accent-border: rgba(96, 165, 250, 0.25);
-}
-
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
