@@ -20,29 +20,6 @@
 
     .popup-root { width: 280px; background: #f0f4ff; position: relative; overflow: hidden; }
 
-    .clouds { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-    .cloud { position: absolute; background: #bfdbfe; border-radius: 50%; opacity: 0.5; animation: moveClouds linear infinite; }
-    .cloud::before, .cloud::after { content: ""; position: absolute; background: #bfdbfe; border-radius: 50%; }
-    .cloud::before { width: 60%; height: 60%; top: -30%; left: 10%; }
-    .cloud::after { width: 40%; height: 40%; top: -20%; left: 50%; }
-    .cloud1 { width: 70px; height: 35px; top: 8%; left: 900px; animation-duration: 2s; }
-    .cloud2 { width: 100px; height: 50px; top: 35%; left: 1200px; animation-duration: 3s; }
-    .cloud3 { width: 55px; height: 30px; top: 15%; left: 1600px; animation-duration: 4s; }
-    .cloud4 { width: 80px; height: 40px; top: 60%; left: 800px; animation-duration: 2.8s; }
-    .cloud5 { width: 110px; height: 38px; top: 75%; left: 1400px; animation-duration: 2.2s; }
-    @keyframes moveClouds { 0% { transform: translateX(0); } 100% { transform: translateX(-1800px); opacity: 0; } }
-
-    .longfazers { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-    .longfazers span { position: absolute; height: 1px; width: 15%; background: rgba(59, 130, 246, 0.15); }
-    .longfazers span:nth-child(1) { top: 20%; animation: lf 0.6s linear infinite; animation-delay: -5s; }
-    .longfazers span:nth-child(2) { top: 40%; animation: lf2 0.8s linear infinite; animation-delay: -1s; }
-    .longfazers span:nth-child(3) { top: 62%; animation: lf3 0.6s linear infinite; }
-    .longfazers span:nth-child(4) { top: 80%; animation: lf4 0.5s linear infinite; animation-delay: -3s; }
-    @keyframes lf { 0% { left: 200%; } 100% { left: -200%; opacity: 0; } }
-    @keyframes lf2 { 0% { left: 200%; } 100% { left: -200%; opacity: 0; } }
-    @keyframes lf3 { 0% { left: 200%; } 100% { left: -100%; opacity: 0; } }
-    @keyframes lf4 { 0% { left: 200%; } 100% { left: -100%; opacity: 0; } }
-
     .brand {
       position: relative; z-index: 2;
       display: flex; align-items: center; gap: 8px;
@@ -102,14 +79,11 @@
 </head>
 <body>
   <div class="popup-root">
-    <div class="clouds">
-      <div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div><div class="cloud cloud4"></div><div class="cloud cloud5"></div>
-    </div>
-    <div class="longfazers"><span></span><span></span><span></span><span></span></div>
+
 
     <div class="brand">
       <div class="brand-icon"><img src="icons/icon48.png" alt="OneClick"></div>
-      <span class="brand-name">OneClick Screenshot</span>
+      <span class="brand-name">Web Page Screenshot</span>
       <span class="version-badge" id="ext-version"></span>
     </div>
 
