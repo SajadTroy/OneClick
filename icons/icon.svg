@@ -1,19 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <!-- Background Squircle -->
-  <rect width="512" height="512" rx="115" fill="#3b82f6" />
+  <!-- Crop Marks (Webpage Capture Frame) -->
+  <!-- Top Left -->
+  <path d="M 24 184 L 24 64 Q 24 24 64 24 L 184 24" fill="none" stroke="#3b82f6" stroke-width="48" stroke-linecap="round" />
+  <!-- Top Right -->
+  <path d="M 488 184 L 488 64 Q 488 24 448 24 L 328 24" fill="none" stroke="#3b82f6" stroke-width="48" stroke-linecap="round" />
+  <!-- Bottom Left -->
+  <path d="M 24 328 L 24 448 Q 24 488 64 488 L 184 488" fill="none" stroke="#3b82f6" stroke-width="48" stroke-linecap="round" />
+  <!-- Bottom Right -->
+  <path d="M 488 328 L 488 448 Q 488 488 448 488 L 328 488" fill="none" stroke="#3b82f6" stroke-width="48" stroke-linecap="round" />
 
-  <!-- Camera Top Bump (Flash / Viewfinder) -->
-  <rect x="186" y="125" width="140" height="64" rx="26" fill="#1e293b" />
-  <!-- Camera Flash -->
-  <rect x="224" y="138" width="64" height="13" rx="6" fill="#475569" />
-
-  <!-- Main Camera Body -->
-  <rect x="96" y="157" width="320" height="218" rx="51" fill="#1e293b" />
+  <!-- Outer Lens Housing -->
+  <circle cx="256" cy="256" r="180" fill="#1e293b" />
   
-  <!-- Main Lens -->
-  <circle cx="256" cy="262" r="67" fill="#38bdf8" />
+  <!-- Lens Barrel -->
+  <circle cx="256" cy="256" r="156" fill="#3b82f6" />
   
-  <!-- Inner Lens Reflection -->
-  <circle cx="275" cy="237" r="22" fill="#bae6fd" opacity="0.8" />
-  <circle cx="256" cy="262" r="45" fill="none" stroke="#ffffff" stroke-width="6" stroke-opacity="0.3" />
+  <!-- Inner Lens Glass -->
+  <circle cx="256" cy="256" r="132" fill="#1e3a8a" />
+  
+  <!-- Lens Deep Core -->
+  <circle cx="256" cy="256" r="80" fill="#0f172a" />
+  
+  <!-- Aperture / Inner Ring -->
+  <circle cx="256" cy="256" r="106" fill="none" stroke="#3b82f6" stroke-width="6" stroke-opacity="0.4" />
+  
+  <!-- Light Glints -->
+  <circle cx="196" cy="196" r="28" fill="#ffffff" opacity="0.95" />
+  <circle cx="260" cy="170" r="14" fill="#ffffff" opacity="0.8" />
 </svg>
