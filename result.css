@@ -46,7 +46,7 @@
   --accent-tint: rgba(59, 130, 246, 0.08);
   --accent-border: rgba(59, 130, 246, 0.2);
   --radius: 0.5rem;
-  --toolbar-h: 52px;
+  --toolbar-h: 68px;
 }
 *, *::before, *::after {
   box-sizing: border-box;
@@ -87,8 +87,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 0 16px;
+  gap: 16px;
+  padding: 0 24px;
   background-color: var(--chrome);
   border-bottom: 1px solid var(--border);
   height: var(--toolbar-h);
@@ -100,20 +100,20 @@ body {
 .toolbar-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 
 .toolbar-right {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
 .brand-icon {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
 }
 
@@ -124,7 +124,7 @@ body {
 }
 
 .brand-name {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--foreground);
   white-space: nowrap;
@@ -134,9 +134,9 @@ body {
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
+  padding: 4px 10px;
   font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   color: var(--muted-fg);
@@ -148,9 +148,9 @@ body {
 
 .separator {
   width: 1px;
-  height: 24px;
+  height: 32px;
   background-color: var(--border);
-  margin: 0 2px;
+  margin: 0 4px;
   flex-shrink: 0;
 }
 
@@ -158,15 +158,15 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 10px;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
   border: none;
   border-radius: var(--radius);
   background: transparent;
   color: var(--foreground);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s, opacity 0.15s;
@@ -184,8 +184,8 @@ body {
 }
 
 .btn-icon svg {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
 }
 
@@ -217,12 +217,12 @@ body {
   gap: 0;
   background-color: var(--muted);
   border-radius: 8px;
-  padding: 2px;
+  padding: 4px;
 }
 
 .zoom-group .btn-icon {
-  height: 28px;
-  width: 28px;
+  height: 34px;
+  width: 34px;
   padding: 0;
   border-radius: 6px;
 }
@@ -232,18 +232,18 @@ body {
 }
 
 .zoom-pct {
-  height: 28px;
-  padding: 0 8px;
+  height: 34px;
+  padding: 0 12px;
   border-radius: 6px;
   font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
-  font-size: 12px;
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
   gap: 4px;
 }
 
 .zoom-pct svg {
-  width: 11px;
-  height: 11px;
+  width: 14px;
+  height: 14px;
 }
 
 .zoom-pct.is-fit {
@@ -261,8 +261,8 @@ body {
 }
 
 .bmc-link img {
-  height: 32px;
-  border-radius: 6px;
+  height: 40px;
+  border-radius: 8px;
 }
 
 .app-layout {
