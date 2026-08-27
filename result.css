@@ -31,22 +31,37 @@
 }
 
 :root {
-  --shell: #f0f4ff;
+  --shell: #fff0f6;
   --chrome: #ffffff;
   --workspace: #f8fafc;
   --foreground: #0f172a;
   --muted: #f1f5f9;
   --muted-fg: #64748b;
   --border: #e2e8f0;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
+  --primary: #F55594;
+  --primary-hover: #d81b60;
   --primary-fg: #ffffff;
   --secondary: #10b981;
   --secondary-hover: #059669;
-  --accent-tint: rgba(59, 130, 246, 0.08);
-  --accent-border: rgba(59, 130, 246, 0.2);
+  --accent-tint: rgba(245, 85, 148, 0.08);
+  --accent-border: rgba(245, 85, 148, 0.2);
   --radius: 0.5rem;
   --toolbar-h: 68px;
+}
+
+html.dark {
+  --shell: #1a0812;
+  --chrome: #0f172a;
+  --workspace: #020617;
+  --foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-fg: #94a3b8;
+  --border: #334155;
+  --primary: #F55594;
+  --primary-hover: #f78bb1;
+  --primary-fg: #ffffff;
+  --accent-tint: rgba(245, 85, 148, 0.15);
+  --accent-border: rgba(245, 85, 148, 0.3);
 }
 *, *::before, *::after {
   box-sizing: border-box;
