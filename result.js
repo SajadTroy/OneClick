@@ -39,9 +39,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       fitBtn.classList.remove('is-fit');
     }
 
-    canvasWrap.style.transform = `scale(${currentZoom})`;
-    canvasWrap.style.width = `${canvas.width}px`;
-    canvasWrap.style.height = `${canvas.height}px`;
+    canvasWrap.style.width = `${Math.round(canvas.width * currentZoom)}px`;
+    canvasWrap.style.height = `${Math.round(canvas.height * currentZoom)}px`;
   };
 
   const setZoom = (z) => {
