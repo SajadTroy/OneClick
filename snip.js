@@ -14,8 +14,8 @@
   
   const selection = document.createElement('div');
   selection.style.position = 'absolute';
-  selection.style.border = '2px solid #3b82f6';
-  selection.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+  selection.style.border = '2px solid #F55594';
+  selection.style.backgroundColor = 'rgba(245, 85, 148, 0.1)';
   selection.style.display = 'none';
   overlay.appendChild(selection);
 
