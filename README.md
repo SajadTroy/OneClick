@@ -16,7 +16,7 @@ Capture entire web pages perfectly from top to bottom with a single click, and e
 
 1. Clone or download this repository to your local machine:
    ```bash
-   git clone https://github.com/SajadTroy/OneClick.git
+   git clone https://github.com/SajadTroy/Web-Page-Screenshot.git
    ```
 2. Open Google Chrome and navigate to `chrome://extensions/`
 3. Toggle on **Developer mode** in the top right corner.
